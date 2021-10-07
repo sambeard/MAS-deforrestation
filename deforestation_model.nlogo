@@ -37,16 +37,20 @@ to go
 
   ; evolve
   ask patches [
-    if (maturity >= 1)
+    if (not (ptype = "fire") and maturity >= 1)
     [
       set ptype (cf:ifelse-value
-        ptype = "fire" ["wasteland"]
         ptype = "farmland" ["crops"]
         ptype = "wasteland" ["young forest"]
         ptype = "crops" ["wasteland"]
         ptype = "young forest" ["old forest"]
         [ptype]
       )
+      after-change-patch
+    ]
+    if (ptype = "fire" and maturity <= 0)
+    [
+      set ptype "wasteland"
       after-change-patch
     ]
   ]
@@ -59,7 +63,7 @@ to go
   ; progress maturity
   ask patches [
     set maturity (cf:ifelse-value
-    ptype = "fire" [maturity + (1. / fire_duration)]
+    ptype = "fire" [maturity - (1. / fire_duration)]
     ptype = "farmland" [maturity  + (1. / crop_growth_duration)]
     ptype = "crops" [maturity  + (1. / crop_rot_duration)]
     ptype = "young forest" [maturity + (1. / forest_regrowth_duration)]
@@ -71,7 +75,14 @@ to go
 end
 
 to ignite
-  set ptype "fire" after-change-patch
+  set maturity (cf:ifelse-value
+    ptype = "farmland" [.5]
+    ptype = "crops" [.5]
+    ptype = "young forest" [.8]
+    ptype = "old forest" [2.]
+  )
+  set ptype "fire"
+  color-patch
 end
 
 to-report flamable
