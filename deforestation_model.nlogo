@@ -1,116 +1,16 @@
 extensions [rnd cf]
 
-patches-own [
-  ptype
-  maturity
-]
-
-globals [
-  ptypes
-]
+__includes ["natural_env.nls"]
 
 to setup
   ca
-  set ptypes (list "young forest" "old forest" "farmland" "crops" "wasteland" "fire")
-  let weights (list (amount_of_forest / 2) (amount_of_forest / 2)  (amount_of_farmland / 2) (amount_of_farmland / 2) amount_of_wasteland amount_of_fire)
-  let total sum weights
-  set weights map [x -> x / total ] weights
-  let weights_lookup (map [ [a b] -> list a b ] ptypes weights)
-  show (word "The weighted lookup: " weights_lookup)
-
-  ask patches [
-    set ptype first rnd:weighted-one-of-list weights_lookup [ [p] -> last p ]
-    color-patch
-  ]
+  setup-natural-env
   reset-ticks
 end
 
-to-report fields-with [pt]
-  report patches with [ptype = pt]
-end
-
 to go
-  ; ignite natural fire
-  ask patches [
-    if (flamable * natural_fire_chance / 100 > random-float 1) [ignite]
-  ]
-
-  ; evolve
-  ask patches [
-    if (not (ptype = "fire") and maturity >= 1)
-    [
-      set ptype (cf:ifelse-value
-        ptype = "farmland" ["crops"]
-        ptype = "wasteland" ["young forest"]
-        ptype = "crops" ["wasteland"]
-        ptype = "young forest" ["old forest"]
-        [ptype]
-      )
-      after-change-patch
-    ]
-    if (ptype = "fire" and maturity <= 0)
-    [
-      set ptype "wasteland"
-      after-change-patch
-    ]
-  ]
-  ; set neighbors on fire
-  ask patches [
-    let fire_ns neighbors with [ptype = "fire"]
-    if ((count fire_ns) * flamable * fire_spread / 100 > random-float 1) [ignite]
-  ]
-
-  ; progress maturity
-  ask patches [
-    set maturity (cf:ifelse-value
-    ptype = "fire" [maturity - (1. / fire_duration)]
-    ptype = "farmland" [maturity  + (1. / crop_growth_duration)]
-    ptype = "crops" [maturity  + (1. / crop_rot_duration)]
-    ptype = "young forest" [maturity + (1. / forest_regrowth_duration)]
-    ptype = "wasteland" [maturity + (1. / forest_regrowth_duration)]
-    [maturity])
-  ]
-
+  update-natural-world
   tick
-end
-
-to ignite
-  set maturity (cf:ifelse-value
-    ptype = "farmland" [.5]
-    ptype = "crops" [.5]
-    ptype = "young forest" [.8]
-    ptype = "old forest" [2.]
-  )
-  set ptype "fire"
-  color-patch
-end
-
-to-report flamable
-  report (cf:ifelse-value
-    ptype = "fire" [0.]
-    ptype = "wasteland" [0.]
-    ptype = "crops" [crops_flammabillity]
-    ptype = "farmland" [farmland_flammabillity]
-    ptype = "young forest" [young_forest_flammabillity]
-    ptype = "old forest" [old_forest_flammabillity]
-    [0.]
-  )
-end
-
-to after-change-patch
-  set maturity 0
-  color-patch
-end
-
-to color-patch
-  set pcolor (cf:ifelse-value
-  ptype = "young forest" [ 53 ]
-  ptype = "old forest" [ 51 ]
-  ptype = "wasteland" [ 36 ]
-  ptype = "farmland" [ 67 ]
-  ptype = "crops" [ 65 ]
-  ptype = "fire" [ red ]
-    [ grey ])
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
