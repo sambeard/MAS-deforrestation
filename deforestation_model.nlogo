@@ -310,8 +310,8 @@ CHOOSER
 175
 world_file
 world_file
-"world_bmp"
-0
+"world_bmp" "world_2"
+1
 
 TEXTBOX
 15
