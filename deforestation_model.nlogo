@@ -21,9 +21,9 @@ to go
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-330
+227
 10
-938
+835
 619
 -1
 -1
@@ -48,10 +48,10 @@ ticks
 30.0
 
 BUTTON
-113
 13
-176
-46
+16
+76
+49
 NIL
 setup
 NIL
@@ -65,10 +65,10 @@ NIL
 1
 
 BUTTON
-186
-14
-249
-47
+86
+17
+149
+50
 NIL
 go
 T
@@ -82,9 +82,9 @@ NIL
 1
 
 SLIDER
-982
+879
 115
-1154
+1051
 148
 fire_spread
 fire_spread
@@ -97,9 +97,9 @@ fire_spread
 HORIZONTAL
 
 SLIDER
-982
+879
 74
-1154
+1051
 107
 fire_duration
 fire_duration
@@ -112,10 +112,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-12
-311
-199
-344
+14
+381
+201
+414
 forest_regrowth_duration
 forest_regrowth_duration
 1
@@ -127,10 +127,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-10
-180
-182
-213
+12
+250
+184
+283
 crop_rot_duration
 crop_rot_duration
 1
@@ -142,10 +142,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-11
-138
-184
-171
+13
+208
+186
+241
 crop_growth_duration
 crop_growth_duration
 1
@@ -157,9 +157,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-981
+878
 35
-1153
+1050
 68
 natural_fire_chance
 natural_fire_chance
@@ -172,10 +172,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-13
-270
-195
-303
+15
+340
+197
+373
 forest_mature_duration
 forest_mature_duration
 0
@@ -187,9 +187,9 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-990
+887
 18
-1140
+1037
 36
 Fire parameters
 12
@@ -197,29 +197,29 @@ Fire parameters
 1
 
 TEXTBOX
-22
-114
-172
-132
+24
+184
+174
+202
 Farmland parameters
 12
 0.0
 1
 
 TEXTBOX
-22
-246
-172
-264
+24
+316
+174
+334
 Forest parameters
 12
 0.0
 1
 
 SLIDER
-983
+880
 257
-1186
+1083
 290
 young_forest_flammabillity
 young_forest_flammabillity
@@ -232,9 +232,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-984
+881
 300
-1169
+1066
 333
 old_forest_flammabillity
 old_forest_flammabillity
@@ -247,9 +247,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-983
+880
 174
-1160
+1057
 207
 farmland_flammabillity
 farmland_flammabillity
@@ -262,9 +262,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-984
+881
 214
-1156
+1053
 247
 crops_flammabillity
 crops_flammabillity
@@ -277,9 +277,9 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-990
+887
 458
-1140
+1037
 654
 Future improvements:\n\nHave a global or local (different scale) climate system influence the growth rate/ spread rate\n\nmake maturity for fire a decreasing value that starts with a value depending on the originating tile\n\nTransportation is mainly via boats
 11
@@ -287,12 +287,12 @@ Future improvements:\n\nHave a global or local (different scale) climate system 
 1
 
 BUTTON
-11
-13
-104
-46
-clear-world
-file-delete \"patches.csv\"
+14
+87
+141
+120
+regenerate world
+regenerate-world
 NIL
 1
 T
@@ -304,14 +304,24 @@ NIL
 1
 
 CHOOSER
-12
-56
-150
-101
+14
+130
+152
+175
 world_file
 world_file
 "world_bmp"
 0
+
+TEXTBOX
+15
+63
+165
+81
+World file generation
+12
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
