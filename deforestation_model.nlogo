@@ -12,7 +12,7 @@ to setup
 end
 
 to regenerate-world
-  show (shell:exec "py" "generate_world.py" world_file (word world-width " " world-height))
+  show (shell:exec "py" "generate_world.py" world_file (word world-width) (word world-height))
 end
 
 to go
