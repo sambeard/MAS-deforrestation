@@ -1,11 +1,18 @@
-extensions [rnd cf]
+extensions [rnd cf shell]
 
 __includes ["natural_env.nls"]
 
 to setup
   ca
+  if not file-exists? "patches.csv"
+  [regenerate-world]
+
   import-world "patches.csv"
   reset-ticks
+end
+
+to regenerate-world
+  show (shell:exec "py" "generate_world.py" world_file (word world-width " " world-height))
 end
 
 to go
@@ -14,9 +21,9 @@ to go
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-244
+330
 10
-852
+938
 619
 -1
 -1
@@ -41,10 +48,10 @@ ticks
 30.0
 
 BUTTON
-16
-11
-79
-44
+113
+13
+176
+46
 NIL
 setup
 NIL
@@ -58,10 +65,10 @@ NIL
 1
 
 BUTTON
-89
-12
-152
-45
+186
+14
+249
+47
 NIL
 go
 T
@@ -75,9 +82,9 @@ NIL
 1
 
 SLIDER
-896
+982
 115
-1068
+1154
 148
 fire_spread
 fire_spread
@@ -90,9 +97,9 @@ fire_spread
 HORIZONTAL
 
 SLIDER
-896
+982
 74
-1068
+1154
 107
 fire_duration
 fire_duration
@@ -105,10 +112,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-17
-260
-204
-293
+12
+311
+199
+344
 forest_regrowth_duration
 forest_regrowth_duration
 1
@@ -120,10 +127,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
-129
-187
-162
+10
+180
+182
+213
 crop_rot_duration
 crop_rot_duration
 1
@@ -135,10 +142,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-16
-87
-189
-120
+11
+138
+184
+171
 crop_growth_duration
 crop_growth_duration
 1
@@ -150,9 +157,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-895
+981
 35
-1067
+1153
 68
 natural_fire_chance
 natural_fire_chance
@@ -165,10 +172,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-18
-219
-200
-252
+13
+270
+195
+303
 forest_mature_duration
 forest_mature_duration
 0
@@ -180,9 +187,9 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-904
+990
 18
-1054
+1140
 36
 Fire parameters
 12
@@ -190,29 +197,29 @@ Fire parameters
 1
 
 TEXTBOX
-27
-63
-177
-81
+22
+114
+172
+132
 Farmland parameters
 12
 0.0
 1
 
 TEXTBOX
-27
-195
-177
-213
+22
+246
+172
+264
 Forest parameters
 12
 0.0
 1
 
 SLIDER
-897
+983
 257
-1100
+1186
 290
 young_forest_flammabillity
 young_forest_flammabillity
@@ -225,9 +232,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-898
+984
 300
-1083
+1169
 333
 old_forest_flammabillity
 old_forest_flammabillity
@@ -240,9 +247,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-897
+983
 174
-1074
+1160
 207
 farmland_flammabillity
 farmland_flammabillity
@@ -255,9 +262,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-898
+984
 214
-1070
+1156
 247
 crops_flammabillity
 crops_flammabillity
@@ -270,14 +277,41 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-904
+990
 458
-1054
+1140
 654
 Future improvements:\n\nHave a global or local (different scale) climate system influence the growth rate/ spread rate\n\nmake maturity for fire a decreasing value that starts with a value depending on the originating tile\n\nTransportation is mainly via boats
 11
 0.0
 1
+
+BUTTON
+11
+13
+104
+46
+clear-world
+file-delete \"patches.csv\"
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+CHOOSER
+12
+56
+150
+101
+world_file
+world_file
+"world_bmp"
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
