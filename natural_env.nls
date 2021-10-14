@@ -5,20 +5,6 @@ patches-own [
   maturity
 ]
 
-to setup-natural-env
-  let ptypes (list "young forest" "old forest" "farmland" "crops" "wasteland" "fire")
-  let weights (list (amount_of_forest / 2) (amount_of_forest / 2)  (amount_of_farmland / 2) (amount_of_farmland / 2) amount_of_wasteland amount_of_fire)
-  let total sum weights
-  set weights map [x -> x / total ] weights
-  let weights_lookup (map [ [a b] -> list a b ] ptypes weights)
-  show (word "The weighted lookup: " weights_lookup)
-
-  ask patches [
-    set ptype first rnd:weighted-one-of-list weights_lookup [ [p] -> last p ]
-    color-patch
-  ]
-end
-
 to update-natural-world
     ; ignite natural fire
   ask patches [
