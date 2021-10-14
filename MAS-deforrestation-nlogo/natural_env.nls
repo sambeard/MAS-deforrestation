@@ -3,49 +3,21 @@ extensions [rnd cf]
 patches-own [
   ptype
   maturity
-
 ]
 
 to setup-natural-env
-  let ptypes (list "young forest" "old forest" "farmland" "crops" "wasteland" "fire" "river")
-  ;let weights (list (amount_of_forest_seeds / 2) (amount_of_forest / 2)  (amount_of_farmland / 2) (amount_of_farmland / 2) amount_of_wasteland amount_of_fire river_length)
-  ;let total sum weights
-  ;set weights map [x -> x / total ] weights
-  ;let weights_lookup (map [ [a b] -> list a b ] ptypes weights)
-  ;show (word "The weighted lookup: " weights_lookup)
-  let radius Forest_Radius
-  let seeds  []
-  let river_seeds []
+  let ptypes (list "young forest" "old forest" "farmland" "crops" "wasteland" "fire")
+  let weights (list (amount_of_forest / 2) (amount_of_forest / 2)  (amount_of_farmland / 2) (amount_of_farmland / 2) amount_of_wasteland amount_of_fire)
+  let total sum weights
+  set weights map [x -> x / total ] weights
+  let weights_lookup (map [ [a b] -> list a b ] ptypes weights)
+  show (word "The weighted lookup: " weights_lookup)
 
-  repeat amount_of_forest_seeds [
-    let x random world-width * 0.75
-    let y random world-height
-    ask patches with [(pxcor - x) ^ 2 + (pycor - y) ^ 2 < radius ^ 2] [
-      set ptype "old forest"
-      color-patch
-    ]
-    
-    ask patches with [ ptype != ("old forest") and (pxcor - x) ^ 2 + (pycor - y) ^ 2 >= radius ^ 2 and (pxcor - x) ^ 2 + (pycor - y) ^ 2 < (radius * 1.5) ^ 2 ][
-      set ptype "young forest"
-      color-patch
-    ]
+  ask patches [
+    set ptype first rnd:weighted-one-of-list weights_lookup [ [p] -> last p ]
+    color-patch
   ]
-  
-   ask patches with [ ptype != ("old forest") and ptype != ("young forest")][
-      set ptype "wasteland" 
-    
-    ]
- 
-    ask patches with [ptype = ("wasteland")] [
-      let prob random-float 1
-      if prob > 0.75 [
-        set ptype "farmland"
-      ] 
-    ]
-   color-patch
 end
-
-
 
 to update-natural-world
     ; ignite natural fire
@@ -127,6 +99,5 @@ to color-patch
   ptype = "farmland" [ 67 ]
   ptype = "crops" [ 65 ]
   ptype = "fire" [ red ]
-  ptype = "river" [ blue ]
-   [ grey ])
+    [ grey ])
 end

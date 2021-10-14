@@ -4,8 +4,10 @@ __includes ["natural_env.nls"]
 
 to setup
   ca
-  setup-natural-env
+  ;setup-natural-env
+  import-world "../patches.csv"
   reset-ticks
+
 end
 
 to go
@@ -75,14 +77,14 @@ NIL
 1
 
 SLIDER
-1160
-139
-1342
-172
-amount_of_forest_seeds
-amount_of_forest_seeds
+17
+221
+189
+254
+amount_of_forest
+amount_of_forest
 0
-50
+100
 10.0
 1
 1
@@ -128,7 +130,7 @@ amount_of_fire
 amount_of_fire
 0
 100
-14.0
+51.0
 1
 1
 NIL
@@ -143,7 +145,7 @@ fire_spread
 fire_spread
 0.0
 50
-0.0
+27.4
 .1
 1
 %
@@ -158,7 +160,7 @@ fire_duration
 fire_duration
 1
 10
-1.0
+4.0
 1
 1
 NIL
@@ -166,14 +168,14 @@ HORIZONTAL
 
 SLIDER
 16
-546
+480
 203
-579
+513
 forest_regrowth_duration
 forest_regrowth_duration
 1
 500
-1.0
+10.0
 1
 1
 NIL
@@ -181,9 +183,9 @@ HORIZONTAL
 
 SLIDER
 14
-415
+349
 186
-448
+382
 crop_rot_duration
 crop_rot_duration
 1
@@ -196,9 +198,9 @@ HORIZONTAL
 
 SLIDER
 15
-373
+307
 188
-406
+340
 crop_growth_duration
 crop_growth_duration
 1
@@ -218,7 +220,7 @@ natural_fire_chance
 natural_fire_chance
 0
 .1
-0.0
+0.1
 .001
 1
 NIL
@@ -226,14 +228,14 @@ HORIZONTAL
 
 SLIDER
 16
-505
+439
 198
-538
+472
 forest_mature_duration
 forest_mature_duration
 0
 500
-0.0
+63.0
 1
 1
 NIL
@@ -261,9 +263,9 @@ Fire parameters
 
 TEXTBOX
 26
-349
+283
 176
-367
+301
 Farmland parameters
 12
 0.0
@@ -271,9 +273,9 @@ Farmland parameters
 
 TEXTBOX
 26
-481
+415
 176
-499
+433
 Forest parameters
 12
 0.0
@@ -303,7 +305,7 @@ old_forest_flammabillity
 old_forest_flammabillity
 0
 1
-0.0
+0.37
 .01
 1
 NIL
@@ -318,7 +320,7 @@ farmland_flammabillity
 farmland_flammabillity
 0
 1
-0.0
+0.58
 .01
 1
 NIL
@@ -333,7 +335,7 @@ crops_flammabillity
 crops_flammabillity
 0
 1
-0.0
+0.78
 .01
 1
 NIL
@@ -348,32 +350,6 @@ Future improvements:\n\nHave a global or local (different scale) climate system 
 11
 0.0
 1
-
-SLIDER
-13
-307
-185
-340
-river_length
-river_length
-0
-100
-0.0
-1
-1
-NIL
-HORIZONTAL
-
-INPUTBOX
-1160
-177
-1315
-237
-Forest_Radius
-30.0
-1
-0
-Number
 
 @#$#@#$#@
 ## WHAT IS IT?
