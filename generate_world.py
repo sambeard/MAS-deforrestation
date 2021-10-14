@@ -39,42 +39,44 @@ def calculate_min_distance(color):
             patch_type = i
     return patch_type
 
+def main(img_name, width, height):
+    im = cv.resize(cv.imread("worlds/{0}.bmp".format(img_name)),(width,height))
+    w, h ,_= im.shape
 
-im = cv.resize(cv.imread("world_bmp.bmp"),(200,200))
-w, h ,_= im.shape
+    Z = im.reshape((-1,3))
+    Z = np.float32(Z)
 
-Z = im.reshape((-1,3))
-Z = np.float32(Z)
+    K = 10
+    criteria =  (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    ret, label, center  = cv.kmeans(Z, K, None, criteria, 10, cv.KMEANS_RANDOM_CENTERS)
 
-K = 10
-criteria =  (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-ret, label, center  = cv.kmeans(Z, K, None, criteria, 10, cv.KMEANS_RANDOM_CENTERS)
+    center = np.uint8(center)
+    res = center[label.flatten()]
+    res2 = res.reshape((im.shape))
 
-center = np.uint8(center)
-res = center[label.flatten()]
-res2 = res.reshape((im.shape))
+    original_stdout = sys.stdout # Save a reference to the original standard output
 
-original_stdout = sys.stdout # Save a reference to the original standard output
+    cp_label = np.array(label)
+    cp_label = cp_label.reshape(-1)
+    patch_names = []
+    new_labels = np.zeros((w,h), np.int16) 
 
-cp_label = np.array(label)
-cp_label = cp_label.reshape(-1)
-patch_names = []
-new_labels = np.zeros((w,h), np.int16) 
+    print("Generating World...")
+    print("=========================")
+    print("Settings: (Bitmap, width, height)")
+    print("          ('{0}', {1}, {2})".format(img_name, width, height))
 
-print("Generating World...")
+    for i in range(0, w):
+        for j in range(0, h):
+            new_labels[i][j] = cp_label[i + (h-1)*j]
+            color = np.int64(res2[i][j])
+            patch_type = calculate_min_distance(color)
+            new_labels[i][j] = patch_type
+    filename = 'patches.csv'
 
-for i in range(0, w):
-    for j in range(0, h):
-        new_labels[i][j] = cp_label[i + (h-1)*j]
-        color = np.int64(res2[i][j])
-        patch_type = calculate_min_distance(color)
-        new_labels[i][j] = patch_type
-
-filename = 'patches.csv'
-
-with open(filename, 'w') as f:
-    sys.stdout = f # Change the standard output to the file we created.
-    print(""""export-world data (NetLogo 6.2.0)"
+    with open(filename, 'w') as f:
+        sys.stdout = f # Change the standard output to the file we created.
+        print(""""export-world data (NetLogo 6.2.0)"
 "deforestation_model.nlogo"
 "10/14/2021 12:37:35:943 +0200"
 
@@ -83,29 +85,37 @@ with open(filename, 'w') as f:
 
 "GLOBALS"
 "min-pxcor","max-pxcor","min-pycor","max-pycor","perspective","subject","nextIndex","directed-links","ticks","crops_flammabillity","crop_growth_duration","crop_rot_duration","farmland_flammabillity","fire_duration","fire_spread","forest_mature_duration","forest_regrowth_duration","natural_fire_chance","old_forest_flammabillity","young_forest_flammabillity"
-"0","199","0","199","0","nobody","0",\"""NEITHER\""","0","0.6","300","112","0.35","5","12.4","500","250","0.001","0.15","0.35"
+"0","{0}","0","{1}","0","nobody","0",\"""NEITHER\""","0","0.6","300","112","0.35","5","12.4","500","250","0.001","0.15","0.35"
 
 "TURTLES"
 "who","color","heading","xcor","ycor","shape","label","label-color","breed","hidden?","size","pen-size","pen-mode"
 
 "PATCHES"
-"pxcor","pycor","pcolor","plabel","plabel-color","ptype","maturity" """
-)
-    for pxcor in range(0, w):
-        for pycor in range(0, h):
-            pcolor = patches[new_labels[pxcor][pycor]][3]
-            plabel = patch_name[new_labels[pxcor][pycor]]
-            print("\"%d\",\"%d\",\"%d\",\"\"\"\"\"\",\"9.9\",\"\"\"%s\"\"\",\"0\""% (pxcor, pycor, pcolor, plabel))
-    
-    print("""
-"LINKS"
-"end1","end2","color","label","label-color","hidden?","breed","thickness","shape","tie-mode"
+"pxcor","pycor","pcolor","plabel","plabel-color","ptype","maturity" """.format(width-1,height-1)
+    )
+        for pxcor in range(0, w):
+            for pycor in range(0, h):
+                pcolor = patches[new_labels[pxcor][pycor]][3]
+                plabel = patch_name[new_labels[pxcor][pycor]]
+                print("\"%d\",\"%d\",\"%d\",\"\"\"\"\"\",\"9.9\",\"\"\"%s\"\"\",\"0\""% (pxcor, pycor, pcolor, plabel))
+        
+        print("""
+    "LINKS"
+    "end1","end2","color","label","label-color","hidden?","breed","thickness","shape","tie-mode"
 
 
-"PLOTS"
-""
-"EXTENSIONS"
-    """)
-    sys.stdout = original_stdout # Reset the standard output to its original value
+    "PLOTS"
+    ""
+    "EXTENSIONS"
+        """)
+        sys.stdout = original_stdout # Reset the standard output to its original value
 
-print("World sucessfully generated to file", filename)
+    print("World sucessfully generated to file", filename)
+
+
+if __name__ == "__main__":
+    # set default
+    args = ("world_bmp", 200, 200)
+    if(len(sys.argv)==4):
+        args = (sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
+    main(*args)
