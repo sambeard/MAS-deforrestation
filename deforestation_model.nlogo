@@ -1,6 +1,9 @@
 extensions [rnd cf shell]
 
-__includes ["natural_env.nls"]
+__includes [
+  "natural_env.nls"
+  "agents.nls"
+]
 
 to setup
   ca

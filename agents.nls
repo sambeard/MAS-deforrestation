@@ -1,0 +1,186 @@
+globals [
+  forest-patches        ;; agentset of green patches representing the rainforest
+  farmland-patches      ;; agentset of green patches representing the agricultural land cultivated by farmers
+
+  wasteland-patches     ;; agentset of green patches representing the areas of virgin forest that have been cut down
+  city-patches          ;; agentset of green patches representing the residential area
+]
+
+patches-own [ ;patch parameters
+  ptype
+  maturity
+]
+
+breed [ farmers farmer]; Farmer agent
+
+farmers-own [target targetType]; Farmer parameters
+
+to color-patch
+  set pcolor (ifelse-value
+  ptype = "forest" [ 54 ]
+  ptype = "forestBorder" [57]
+  ptype = "wasteland" [ 36 ]
+  ptype = "farmland" [ 47 ]
+  ptype = "city" [ 6 ]
+    [ 0 ])
+end
+
+
+
+
+to setup
+  clear-all
+  reset-ticks
+
+  setup-map
+  setup-agents
+end
+
+
+
+to setup-map
+
+  let ptypes (list "forest" "wasteland" "farmland" "city")
+  ask patches[
+    set ptype  "forest"
+    color-patch
+  ]
+
+  ;;add forest borders
+  ask patches[
+    if pxcor > (max-pxcor - cityWidth - farmWidth - 1) and pycor < (min-pycor + cityHeight + farmWidth + 1)[      ;; patches on the right side[
+      set ptype  "forestBorder" ]
+  color-patch
+  ]
+
+
+  ;;add farmlands arround the city
+  ask patches[
+    if pxcor > (max-pxcor - cityWidth - farmWidth) and pycor < (min-pycor + cityHeight + farmWidth)[      ;; patches on the right side[
+      set ptype  "farmland" ]
+  color-patch
+  ]
+
+  ;;add random wasteland on cultivated lands
+  repeat random 6 [
+    ask patch (max-pxcor - cityWidth - random farmWidth) ( min-pycor + random (cityHeight + farmWidth)) [set ptype  "wasteland" color-patch]
+  ]
+  repeat random 6 [
+    ask patch (max-pxcor - random (cityWidth + farmWidth)) (min-pycor + cityHeight + random farmWidth) [set ptype  "wasteland" color-patch]
+  ]
+
+
+  ;;add the city
+  ask patches
+  [ if pxcor > (max-pxcor - cityWidth) and pycor < (min-pycor + cityHeight)      ;; patches on the right side
+    [ set ptype  "city" ]
+  color-patch]  ;; of the view turn green
+
+end
+
+to setup-agents
+  setup-farmers
+end
+
+to setup-farmers
+  create-farmers initial-number-farmers [
+    set shape "person"
+    set target one-of patches with [ptype = "city"]
+    set targetType "city"
+    face target
+    setxy (max-pxcor - random cityWidth) (min-pycor + random cityHeight)
+  ]
+end
+
+to add-farmer
+create-farmers 1 [
+    set shape "person"
+    set target one-of patches with [ptype = "city"]
+    set targetType "city"
+    face target
+    setxy (max-pxcor - random cityWidth) (min-pycor + random cityHeight)
+  ]
+end
+
+to remove-farmer
+  ask one-of farmers [die]
+end
+
+to newFarmerTarget
+  let prob random 100
+  if prob < 3 [
+
+      set targetType "forestBorder"
+      set target one-of patches with [ptype = "forestBorder"]
+      face target
+
+  ]
+
+  ;if prob > 3 and prob < 20 and count patches with [ptype = "wasteland"] != 0 [
+    if prob > 3 and prob < 20[
+      set targetType "wasteland"
+      set target one-of patches with [ptype = "wasteland"]
+      face target
+
+  ]
+
+  if prob > 20 [
+
+      set targetType "city"
+      set target one-of patches with [ptype = "city"]
+      face target
+
+  ]
+end
+
+to farmersMovement
+  ask farmers[
+
+    if distance target = 0 [                    ;; if farmer on his target
+      if targetType = "forestBorder" [
+        chopForest
+        newFarmerTarget
+
+      ]
+      if targetType = "city" [
+        newFarmerTarget
+
+      ]
+      if targetType = "wasteland" [
+        newFarmerTarget
+        ;wasteland-action
+      ]
+    ]
+
+    face target
+    ifelse distance target < 1
+      [ move-to target ]
+      [ fd 1 ]
+  ]
+
+
+
+end
+
+
+to chopForest
+  set ptype "wasteland"
+  ask neighbors with [ ptype = "forest"] [set ptype "forestBorder" color-patch]
+  if random 100 < 95 [
+      set ptype "farmland"
+  ]
+  color-patch
+end
+
+;TODO fix error bug because no patches left
+to wasteland-action
+  if random 100 < 95 [
+      set ptype "farmland"
+  ]
+end
+
+to go
+  if count patches with [ ptype = "forestBorder"] = 0 [ stop ]
+  farmersMovement
+  tick
+end
