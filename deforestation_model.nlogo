@@ -1,11 +1,18 @@
-extensions [rnd cf]
+extensions [rnd cf shell]
 
 __includes ["natural_env.nls"]
 
 to setup
   ca
-  setup-natural-env
+  if not file-exists? "patches.csv"
+  [regenerate-world]
+
+  import-world "patches.csv"
   reset-ticks
+end
+
+to regenerate-world
+  show (shell:exec "py" "generate_world.py" world_file (word world-width) (word world-height))
 end
 
 to go
@@ -14,10 +21,10 @@ to go
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-244
+227
 10
-855
-622
+835
+619
 -1
 -1
 3.0
@@ -30,10 +37,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--100
-100
--100
-100
+0
+199
+0
+199
 0
 0
 1
@@ -41,10 +48,10 @@ ticks
 30.0
 
 BUTTON
+13
 16
-11
-79
-44
+76
+49
 NIL
 setup
 NIL
@@ -58,10 +65,10 @@ NIL
 1
 
 BUTTON
-89
-12
-152
-45
+86
+17
+149
+50
 NIL
 go
 T
@@ -75,84 +82,24 @@ NIL
 1
 
 SLIDER
-17
-221
-189
-254
-amount_of_forest
-amount_of_forest
-0
-100
-87.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-19
-179
-192
-212
-amount_of_wasteland
-amount_of_wasteland
-0
-100
-13.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-21
-135
-193
-168
-amount_of_farmland
-amount_of_farmland
-0
-100
-39.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-20
-93
-192
-126
-amount_of_fire
-amount_of_fire
-0
-100
-1.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-896
+879
 115
-1068
+1051
 148
 fire_spread
 fire_spread
 0.0
 50
-16.2
+12.4
 .1
 1
 %
 HORIZONTAL
 
 SLIDER
-896
+879
 74
-1068
+1051
 107
 fire_duration
 fire_duration
@@ -165,94 +112,84 @@ NIL
 HORIZONTAL
 
 SLIDER
-16
-480
-203
-513
-forest_regrowth_duration
-forest_regrowth_duration
-1
-500
-39.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
 14
-349
+381
+201
+414
+forest_regrowth_duration
+forest_regrowth_duration
+1
+500
+250.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+12
+250
+184
+283
+crop_rot_duration
+crop_rot_duration
+1
+500
+112.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+13
+208
 186
-382
-crop_rot_duration
-crop_rot_duration
+241
+crop_growth_duration
+crop_growth_duration
 1
 500
-281.0
+300.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-15
-307
-188
-340
-crop_growth_duration
-crop_growth_duration
-1
-500
-276.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-895
+878
 35
-1067
+1050
 68
 natural_fire_chance
 natural_fire_chance
 0
 .1
-0.004
+0.001
 .001
 1
 NIL
 HORIZONTAL
 
 SLIDER
-16
-439
-198
-472
+15
+340
+197
+373
 forest_mature_duration
 forest_mature_duration
 0
 500
-195.0
+500.0
 1
 1
 NIL
 HORIZONTAL
 
 TEXTBOX
-24
-68
-174
-86
-Initialisation parameters
-12
-0.0
-1
-
-TEXTBOX
-904
+887
 18
-1054
+1037
 36
 Fire parameters
 12
@@ -260,92 +197,129 @@ Fire parameters
 1
 
 TEXTBOX
-26
-283
-176
-301
+24
+184
+174
+202
 Farmland parameters
 12
 0.0
 1
 
 TEXTBOX
-26
-415
-176
-433
+24
+316
+174
+334
 Forest parameters
 12
 0.0
 1
 
 SLIDER
-897
+880
 257
-1100
+1083
 290
 young_forest_flammabillity
 young_forest_flammabillity
 0
 1
-0.38
+0.35
 .01
 1
 NIL
 HORIZONTAL
 
 SLIDER
-898
+881
 300
-1083
+1066
 333
 old_forest_flammabillity
 old_forest_flammabillity
 0
 1
-0.2
+0.15
 .01
 1
 NIL
 HORIZONTAL
 
 SLIDER
-897
+880
 174
-1074
+1057
 207
 farmland_flammabillity
 farmland_flammabillity
 0
 1
-0.46
+0.35
 .01
 1
 NIL
 HORIZONTAL
 
 SLIDER
-898
+881
 214
-1070
+1053
 247
 crops_flammabillity
 crops_flammabillity
 0
 1
-0.84
+0.6
 .01
 1
 NIL
 HORIZONTAL
 
 TEXTBOX
-904
+887
 458
-1054
+1037
 654
 Future improvements:\n\nHave a global or local (different scale) climate system influence the growth rate/ spread rate\n\nmake maturity for fire a decreasing value that starts with a value depending on the originating tile\n\nTransportation is mainly via boats
 11
+0.0
+1
+
+BUTTON
+14
+87
+141
+120
+regenerate world
+regenerate-world
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+CHOOSER
+14
+130
+152
+175
+world_file
+world_file
+"world_bmp" "world_2"
+1
+
+TEXTBOX
+15
+63
+165
+81
+World file generation
+12
 0.0
 1
 
