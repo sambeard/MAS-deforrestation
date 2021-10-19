@@ -1,6 +1,7 @@
 import numpy as np
 import cv2 as cv
 import sys
+import random
 from matplotlib import pyplot as plt
 
 
@@ -97,7 +98,8 @@ def main(img_name, width, height):
             for pycor in range(0, h):
                 pcolor = patches[new_labels[pxcor][pycor]][3]
                 plabel = patch_name[new_labels[pxcor][pycor]]
-                print("\"%d\",\"%d\",\"%d\",\"\"\"\"\"\",\"9.9\",\"\"\"%s\"\"\",\"0\""% (pxcor, pycor, pcolor, plabel))
+                maturity = 0 if plabel in ["city", "river"] else random.random()
+                print("\"%d\",\"%d\",\"%d\",\"\"\"\"\"\",\"9.9\",\"\"\"%s\"\"\",\"%f\""% (pxcor, pycor, pcolor, plabel, maturity))
         
         print("""
     "LINKS"
