@@ -316,7 +316,7 @@ CHOOSER
 world_file
 world_file
 "world_bmp" "world_2"
-1
+0
 
 TEXTBOX
 15
