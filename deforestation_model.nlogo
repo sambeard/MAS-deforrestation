@@ -11,6 +11,7 @@ to setup
   [regenerate-world]
 
   import-world "patches.csv"
+  setup-agents
   reset-ticks
 end
 
@@ -20,6 +21,7 @@ end
 
 to go
   update-natural-world
+  update-agents
   tick
 end
 @#$#@#$#@
