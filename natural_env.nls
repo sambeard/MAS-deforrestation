@@ -17,7 +17,9 @@ to update-natural-world
     [
       set ptype (cf:ifelse-value
         ptype = "farmland" ["crops"]
-        ptype = "wasteland" ["young forest"]
+        ptype = "wasteland" and 
+          any? neighbors with [ptype = "river" or ptype = "young forest" or ptype = "old forest"]
+          ["young forest"]
         ptype = "crops" ["wasteland"]
         ptype = "young forest" ["old forest"]
         [ptype]
