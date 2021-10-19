@@ -1,0 +1,93 @@
+extensions [ cf ]
+breed [ citizens citizen ]
+
+citizens-own [target targetType]; citizen parameters
+
+to setup-agents
+  initialize-citizens initial-amount-of-citizens
+end
+
+to update-agents
+  ;if count patches with [ ptype = "forestBorder"] = 0 [ stop ]
+  ask citizens [
+    ; if target patch has changed 
+    if (not([ptype] of target = targetType)) [set-new-target]
+    ;; if citizen on his target
+    if distance target = 0 [perform-action get-new-action]
+    move-towards-target
+  ]
+end
+
+;; CITIZEN RELATED
+;; ===================
+
+to add-citizen
+  initialize-citizens 1
+end
+
+to initialize-citizens [amount]
+  create-citizens amount [
+    set shape "person"
+    set size 3
+    set target a-city-patch
+    set targetType "city"
+    let current a-city-patch
+    setxy ([pxcor] of current) ([pycor] of current)
+    face target
+  ]
+  show count turtles
+end
+
+to remove-citizen
+  ask one-of citizens [die]
+end
+
+;; ACTION RELATED
+;; ==================
+to chop-forest
+  set ptype "young forest"
+  after-change-patch
+  ;ask neighbors with [ ptype = "forest"] [set ptype "forestBorder" color-patch]
+end
+
+to move-towards-target
+    face target
+    ifelse distance target <= movement-speed
+      [ move-to target ]
+      [ fd movement-speed ]
+end
+
+to perform-action
+  let pt get-ptype
+  (cf:ifelse
+    pt = "old forest" [chop-forest]
+    []
+  )
+end
+
+to get-new-action
+  set targetType ifelse-value (get-ptype = "city")
+    ["old forest"]
+    ["city"]
+  set-new-target
+end
+
+to set-new-target
+  let tt targetType
+  set target closest-patch (patches with [ptype = tt])
+end
+
+;; PATCH RELATED
+;; ===================
+to-report get-ptype 
+  report [ptype] of patch-here
+end
+
+to-report closest-patch [patchset]
+  let ph patch-here
+  report first sort-on [distance ph] patchset
+end
+
+to-report a-city-patch
+  report one-of patches with [ptype = "city"]
+end
