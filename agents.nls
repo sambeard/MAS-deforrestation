@@ -1,110 +1,93 @@
-breed [ farmers farmer]; Farmer agent
+extensions [ cf ]
+breed [ citizens citizen ]
 
-farmers-own [target targetType]; Farmer parameters
+citizens-own [target targetType]; citizen parameters
 
 to setup-agents
-  setup-farmers
+  initialize-citizens initial-amount-of-citizens
 end
 
-to setup-farmers
-  create-farmers initial-number-farmers [
+to update-agents
+  ;if count patches with [ ptype = "forestBorder"] = 0 [ stop ]
+  ask citizens [
+    ; if target patch has changed 
+    if (not([ptype] of target = targetType)) [set-new-target]
+    ;; if citizen on his target
+    if distance target = 0 [perform-action get-new-action]
+    move-towards-target
+  ]
+end
+
+;; CITIZEN RELATED
+;; ===================
+
+to add-citizen
+  initialize-citizens 1
+end
+
+to initialize-citizens [amount]
+  create-citizens amount [
     set shape "person"
-    set target one-of patches with [ptype = "city"]
+    set size 3
+    set target a-city-patch
     set targetType "city"
+    let current a-city-patch
+    setxy ([pxcor] of current) ([pycor] of current)
     face target
-    setxy (max-pxcor - random cityWidth) (min-pycor + random cityHeight)
   ]
+  show count turtles
 end
 
-to add-farmer
-create-farmers 1 [
-    set shape "person"
-    set target one-of patches with [ptype = "city"]
-    set targetType "city"
+to remove-citizen
+  ask one-of citizens [die]
+end
+
+;; ACTION RELATED
+;; ==================
+to chop-forest
+  set ptype "young forest"
+  after-change-patch
+  ;ask neighbors with [ ptype = "forest"] [set ptype "forestBorder" color-patch]
+end
+
+to move-towards-target
     face target
-    setxy (max-pxcor - random cityWidth) (min-pycor + random cityHeight)
-  ]
-end
-
-to remove-farmer
-  ask one-of farmers [die]
-end
-
-to newFarmerTarget
-  let prob random 100
-  if prob < 3 [
-
-      set targetType "forestBorder"
-      set target one-of patches with [ptype = "forestBorder"]
-      face target
-
-  ]
-
-  ;if prob > 3 and prob < 20 and count patches with [ptype = "wasteland"] != 0 [
-    if prob > 3 and prob < 20[
-      set targetType "wasteland"
-      set target one-of patches with [ptype = "wasteland"]
-      face target
-
-  ]
-
-  if prob > 20 [
-
-      set targetType "city"
-      set target one-of patches with [ptype = "city"]
-      face target
-
-  ]
-end
-
-to farmersMovement
-  ask farmers[
-
-    if distance target = 0 [                    ;; if farmer on his target
-      if targetType = "forestBorder" [
-        chopForest
-        newFarmerTarget
-
-      ]
-      if targetType = "city" [
-        newFarmerTarget
-
-      ]
-      if targetType = "wasteland" [
-        newFarmerTarget
-        ;wasteland-action
-      ]
-    ]
-
-    face target
-    ifelse distance target < 1
+    ifelse distance target <= movement-speed
       [ move-to target ]
-      [ fd 1 ]
-  ]
-
-
-
+      [ fd movement-speed ]
 end
 
-
-to chopForest
-  set ptype "wasteland"
-  ask neighbors with [ ptype = "forest"] [set ptype "forestBorder" color-patch]
-  if random 100 < 95 [
-      set ptype "farmland"
-  ]
-  color-patch
+to perform-action
+  let pt get-ptype
+  (cf:ifelse
+    pt = "old forest" [chop-forest]
+    []
+  )
 end
 
-;TODO fix error bug because no patches left
-to wasteland-action
-  if random 100 < 95 [
-      set ptype "farmland"
-  ]
+to get-new-action
+  set targetType ifelse-value (get-ptype = "city")
+    ["old forest"]
+    ["city"]
+  set-new-target
 end
 
-to go
-  if count patches with [ ptype = "forestBorder"] = 0 [ stop ]
-  farmersMovement
-  tick
+to set-new-target
+  let tt targetType
+  set target closest-patch (patches with [ptype = tt])
+end
+
+;; PATCH RELATED
+;; ===================
+to-report get-ptype 
+  report [ptype] of patch-here
+end
+
+to-report closest-patch [patchset]
+  let ph patch-here
+  report first sort-on [distance ph] patchset
+end
+
+to-report a-city-patch
+  report one-of patches with [ptype = "city"]
 end
