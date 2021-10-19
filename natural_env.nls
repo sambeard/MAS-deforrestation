@@ -6,7 +6,7 @@ patches-own [
 ]
 
 to update-natural-world
-    ; ignite natural fire
+  ; ignite natural fire
   ask patches [
     if (flamable * natural_fire_chance / 100 > random-float 1) [ignite]
   ]
