@@ -1,6 +1,9 @@
 extensions [rnd cf shell]
 
-__includes ["natural_env.nls"]
+__includes [
+  "natural_env.nls"
+  "agents.nls"
+]
 
 to setup
   ca
@@ -8,6 +11,7 @@ to setup
   [regenerate-world]
 
   import-world "patches.csv"
+  setup-agents
   reset-ticks
 end
 
@@ -17,6 +21,7 @@ end
 
 to go
   update-natural-world
+  update-agents
   tick
 end
 @#$#@#$#@
@@ -34,15 +39,15 @@ GRAPHICS-WINDOW
 1
 1
 0
-1
-1
+0
+0
 1
 0
 199
 0
 199
-0
-0
+1
+1
 1
 ticks
 30.0
@@ -112,10 +117,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-14
-381
-201
-414
+885
+567
+1072
+600
 forest_regrowth_duration
 forest_regrowth_duration
 1
@@ -127,10 +132,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-12
-250
-184
-283
+883
+436
+1055
+469
 crop_rot_duration
 crop_rot_duration
 1
@@ -142,10 +147,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-13
-208
-186
-241
+884
+394
+1057
+427
 crop_growth_duration
 crop_growth_duration
 1
@@ -172,10 +177,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
-340
-197
-373
+886
+526
+1068
+559
 forest_mature_duration
 forest_mature_duration
 0
@@ -197,20 +202,20 @@ Fire parameters
 1
 
 TEXTBOX
-24
-184
-174
-202
+895
+370
+1045
+388
 Farmland parameters
 12
 0.0
 1
 
 TEXTBOX
-24
-316
-174
-334
+895
+502
+1045
+520
 Forest parameters
 12
 0.0
@@ -277,10 +282,10 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-887
-458
-1037
-654
+1163
+472
+1313
+668
 Future improvements:\n\nHave a global or local (different scale) climate system influence the growth rate/ spread rate\n\nmake maturity for fire a decreasing value that starts with a value depending on the originating tile\n\nTransportation is mainly via boats
 11
 0.0
@@ -311,7 +316,7 @@ CHOOSER
 world_file
 world_file
 "world_bmp" "world_2"
-1
+0
 
 TEXTBOX
 15
@@ -322,6 +327,91 @@ World file generation
 12
 0.0
 1
+
+TEXTBOX
+19
+197
+169
+215
+Citizen parameters
+12
+0.0
+1
+
+BUTTON
+80
+335
+135
+368
++
+add-citizen
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+19
+335
+74
+368
+-
+remove-citizen
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+17
+222
+202
+255
+initial-amount-of-citizens
+initial-amount-of-citizens
+0
+100
+100.0
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+17
+275
+145
+324
+amount of citizens
+count citizens
+0
+1
+12
+
+SLIDER
+18
+383
+190
+416
+movement-speed
+movement-speed
+0
+100
+83.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
