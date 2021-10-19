@@ -6,7 +6,7 @@ patches-own [
 ]
 
 to update-natural-world
-    ; ignite natural fire
+  ; ignite natural fire
   ask patches [
     if (flamable * natural_fire_chance / 100 > random-float 1) [ignite]
   ]
@@ -17,7 +17,9 @@ to update-natural-world
     [
       set ptype (cf:ifelse-value
         ptype = "farmland" ["crops"]
-        ptype = "wasteland" ["young forest"]
+        ptype = "wasteland" and 
+          any? neighbors with [ptype = "river" or ptype = "young forest" or ptype = "old forest"]
+          ["young forest"]
         ptype = "crops" ["wasteland"]
         ptype = "young forest" ["old forest"]
         [ptype]
@@ -38,12 +40,14 @@ to update-natural-world
   
   ; progress maturity
   ask patches [
+    ; introduction of random variable for natural progression
+    let eps (random-normal 1 0.15)
     set maturity (cf:ifelse-value
-    ptype = "fire" [maturity - (1. / fire_duration)]
-    ptype = "farmland" [maturity  + (1. / crop_growth_duration)]
-    ptype = "crops" [maturity  + (1. / crop_rot_duration)]
-    ptype = "young forest" [maturity + (1. / forest_regrowth_duration)]
-    ptype = "wasteland" [maturity + (1. / forest_regrowth_duration)]
+    ptype = "fire" [maturity - (1. / fire_duration * eps)]
+    ptype = "farmland" [maturity  + (1. / crop_growth_duration * eps)]
+    ptype = "crops" [maturity  + (1. / crop_rot_duration * eps)]
+    ptype = "young forest" [maturity + (1. / forest_mature_duration * eps)]
+    ptype = "wasteland" [maturity + (1. / forest_regrowth_duration * eps)]
     [maturity])
   ]
   
