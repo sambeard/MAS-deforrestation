@@ -88,8 +88,14 @@ to get-new-action
 end
 
 to set-new-target
+  let prev target
   let tt targetType
-  set target closest-patch (patches with [ptype = tt])
+  set target closest-patch unattended-patches with [ptype = tt]
+  if(prev != nobody)
+    [ set patch-list replace-item [patch-index] of prev patch-list prev ]
+  if(target != nobody)
+    [ set patch-list replace-item [patch-index] of target patch-list nobody ]
+  
 end
 
 ;; PATCH RELATED
@@ -97,6 +103,12 @@ end
 to-report get-ptype 
   report [ptype] of patch-here
 end
+
+to-report unattended-patches
+  ; patch-set automatically filters out all non patch entries (eg nobodies)
+  report patch-set patch-list 
+end
+  
 
 to-report closest-patch [patchset]
   ifelse (any? patchset )[
