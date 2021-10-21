@@ -47,7 +47,6 @@ end
 to chop-forest
   set ptype "young forest"
   after-change-patch
-  ;ask neighbors with [ ptype = "forest"] [set ptype "forestBorder" color-patch]
 end
 
 to move-towards-target
