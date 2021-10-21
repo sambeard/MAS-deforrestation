@@ -1,10 +1,15 @@
 extensions [ cf ]
 breed [ citizens citizen ]
 
+globals [
+  patch-list
+]
+
 citizens-own [target targetType]; citizen parameters
 
 to setup-agents
   initialize-citizens initial-amount-of-citizens
+  setup-free-patches
 end
 
 to update-agents
@@ -19,6 +24,14 @@ to update-agents
       [move-towards-target]
       )
   ]
+end
+
+to setup-free-patches
+  set patch-list (reduce [[l p] -> ifelse-value (p = 0) [(list)] [lput p l] ] (list (sort-on [patch-index] patches)))
+end
+
+to-report patch-index
+  report world-width * pycor + pxcor
 end
 
 ;; CITIZEN RELATED
