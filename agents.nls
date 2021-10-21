@@ -10,11 +10,14 @@ end
 to update-agents
   ;if count patches with [ ptype = "forestBorder"] = 0 [ stop ]
   ask citizens [
-    ; if target patch has changed 
-    if (not([ptype] of target = targetType)) [set-new-target]
-    ;; if citizen on his target
-    if distance target = 0 [perform-action get-new-action]
-    move-towards-target
+    (cf:ifelse
+      ; if target patch has changed 
+      target = nobody [set-new-target]
+      [ptype] of target != targetType [set-new-target]
+      ;; if citizen on his target
+      distance target = 0 [perform-action get-new-action]
+      [move-towards-target]
+      )
   ]
 end
 
