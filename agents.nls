@@ -83,8 +83,11 @@ to-report get-ptype
 end
 
 to-report closest-patch [patchset]
-  let ph patch-here
-  report first sort-on [distance ph] patchset
+  ifelse (any? patchset )[
+    let ph patch-here
+    report first sort-on [distance ph] patchset
+  ]
+  [report nobody]
 end
 
 to-report a-city-patch
