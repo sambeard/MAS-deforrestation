@@ -66,10 +66,12 @@ to chop-forest
 end
 
 to move-towards-target
+  if(target != nobody)[
     face target
     ifelse distance target <= movement-speed
       [ move-to target ]
       [ fd movement-speed ]
+  ]
 end
 
 to perform-action
