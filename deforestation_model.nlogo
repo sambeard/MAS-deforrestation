@@ -12,6 +12,7 @@ to setup
 
   import-world "patches.csv"
   setup-agents
+  setup-patches-score
   reset-ticks
 end
 
@@ -381,7 +382,7 @@ initial-amount-of-citizens
 initial-amount-of-citizens
 0
 100
-45.0
+10.0
 1
 1
 NIL
@@ -407,7 +408,7 @@ movement-speed
 movement-speed
 0
 100
-46.0
+84.0
 1
 1
 NIL
@@ -432,7 +433,7 @@ initial-amount-of-farmers
 initial-amount-of-farmers
 0
 100
-50.0
+6.0
 1
 1
 NIL
@@ -482,6 +483,36 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+1169
+46
+1341
+79
+river-score
+river-score
+0
+1
+0.5
+0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+1170
+102
+1342
+135
+city-score
+city-score
+0
+1
+0.5
+0.01
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
