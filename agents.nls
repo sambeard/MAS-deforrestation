@@ -1,10 +1,15 @@
 extensions [ cf ]
 breed [ citizens citizen ]
+breed [ farmers farmer]
 
 citizens-own [target targetType]; citizen parameters
 
+farmers-own [target targetType]; farmers parameters
+
+
 to setup-agents
   initialize-citizens initial-amount-of-citizens
+  initialize-farmers initial-amount-of-farmers
 end
 
 to update-agents
@@ -16,6 +21,13 @@ to update-agents
     if distance target = 0 [perform-action get-new-action]
     move-towards-target
   ]
+  
+  ask farmers [
+    ; if target patch has changed 
+    if (not([ptype] of target = targetType)) [set-new-target]
+    ;; if citizen on his target
+    if distance target = 0 [perform-action get-new-action]
+  ]
 end
 
 ;; CITIZEN RELATED
@@ -23,6 +35,10 @@ end
 
 to add-citizen
   initialize-citizens 1
+end
+
+to add-farmer
+  initialize-farmers 1
 end
 
 to initialize-citizens [amount]
@@ -38,8 +54,25 @@ to initialize-citizens [amount]
   show count turtles
 end
 
+to initialize-farmers [amount]
+  create-farmers amount [
+    set shape "person"
+    set color 45
+    set size 3
+    set target a-city-patch
+    set targetType "city"
+    let current a-city-patch
+    setxy ([pxcor] of current) ([pycor] of current)
+    face target
+  ]
+end
+
 to remove-citizen
   ask one-of citizens [die]
+end
+
+to remove-farmer
+  ask one-of farmers [die]
 end
 
 ;; ACTION RELATED
@@ -48,6 +81,11 @@ to chop-forest
   set ptype "young forest"
   after-change-patch
   ;ask neighbors with [ ptype = "forest"] [set ptype "forestBorder" color-patch]
+end
+
+to planting-crops
+  set ptype "farmland"
+  after-change-patch
 end
 
 to move-towards-target
@@ -61,6 +99,7 @@ to perform-action
   let pt get-ptype
   (cf:ifelse
     pt = "old forest" [chop-forest]
+    pt = "wasteland" [planting-crops]
     []
   )
 end
