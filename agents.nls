@@ -51,20 +51,22 @@ to initialize-citizens [amount]
     setxy ([pxcor] of current) ([pycor] of current)
     face target
   ]
-  show count turtles
+  ;;show count turtles
 end
 
 to initialize-farmers [amount]
   create-farmers amount [
     set shape "person"
-    set color 45
+    set color 45;;yellow
     set size 3
     set target a-city-patch
     set targetType "city"
     let current a-city-patch
     setxy ([pxcor] of current) ([pycor] of current)
     face target
+    
   ]
+  
 end
 
 to remove-citizen
@@ -84,7 +86,7 @@ to chop-forest
 end
 
 to planting-crops
-  set ptype "farmland"
+  set ptype "crops"
   after-change-patch
 end
 
@@ -105,15 +107,25 @@ to perform-action
 end
 
 to get-new-action
-  set targetType ifelse-value (get-ptype = "city")
+  if breed = farmers[
+    set targetType ifelse-value (get-ptype = "city")
+    ["wasteland"]
+    ["city"]
+    set-new-target
+  ]
+  if breed = citizens[
+    set targetType ifelse-value (get-ptype = "city")
     ["old forest"]
     ["city"]
-  set-new-target
+     set-new-target
+  ]
+  
 end
 
 to set-new-target
   let tt targetType
   set target closest-patch (patches with [ptype = tt])
+ 
 end
 
 ;; PATCH RELATED
@@ -129,4 +141,8 @@ end
 
 to-report a-city-patch
   report one-of patches with [ptype = "city"]
+end
+
+to-report a-wasteland-patch
+  report one-of patches with [ptype = "wasteland"]
 end
