@@ -97,6 +97,7 @@ to-report get-patch-type-for-task [task]
     task = "go home" ["city"]
     [ nobody] ; break on this
   )
+end 
 
 to chop-forest
   set ptype "young forest"
