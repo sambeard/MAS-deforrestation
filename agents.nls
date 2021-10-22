@@ -85,8 +85,19 @@ to remove-farmer
   ask one-of farmers [die]
 end
 
-;; ACTION RELATED
+;; TASK RELATED
 ;; ==================
+to-report get-patch-type-for-task [task]
+  report (ifelse-value
+    task = "chop wood" ["old forest"]
+    task = "get water" ["river"]
+    task = "water patch" ["farmland"]
+    task = "harvest crops" ["crops"]
+    task = "ignite patch" ["young forest"]
+    task = "go home" ["city"]
+    [ nobody] ; break on this
+  )
+
 to chop-forest
   set ptype "young forest"
   after-change-patch
