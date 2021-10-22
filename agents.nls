@@ -8,7 +8,7 @@ globals [
 
 citizens-own [target targetType]; citizen parameters
 
-farmers-own [target targetType]; farmers parameters
+farmers-own [target targetType seeds]; farmers parameters
 
 
 to setup-agents
@@ -63,6 +63,7 @@ to initialize-farmers [amount]
   create-farmers amount [
     setup-agent
     set color 45 ;; yellow
+    set seeds max-seeds
   ]
 end
 
@@ -92,16 +93,27 @@ to chop-forest
 end
 
 to planting-crops
-  set ptype "farmland"
+  
+  ifelse seeds > 0
+  [set ptype "farmland"
   after-change-patch
+  set seeds seeds - 1
+  ]
+  [
+    set targetType "city"
+    set target a-city-patch
+    show "no more seeds"
+    set color 15; yellow
+  ]
 end
 
 to harvest-crops
-  let rand = random 100
+  let rand random 100
   
   ifelse rand < probability-to-turn-into-wasteland
     [set ptype "wasteland"] ;; maybe turn it directly to farmland ? or 1/2 chance to turn it into farmland or wasteland ?
     [set ptype "farmland"]
+  
   after-change-patch
 
 end
@@ -129,9 +141,16 @@ end
 
 to get-new-action
   if is-farmer? self [
-    set targetType ifelse-value (get-ptype = "city")
-    ["wasteland"]
-    ["city"]
+    
+    if get-ptype = "city"[
+      set seeds max-seeds
+      set color 45; yellow
+      set targetType "wasteland"
+    ]
+    
+    ;set targetType ifelse-value (get-ptype = "city")
+    ;["wasteland"]
+   ; ["city"]
     set-new-target
   ]
   if is-citizen? self [
@@ -184,7 +203,7 @@ end
 
 to call-farmers
   ask patches with [ptype = "crops"] [
-    let closest-farmer min-one-of farmers [distance myself]
+    let closest-farmer min-one-of farmers with [ptype != "crops"] [distance myself]
     
     ask closest-farmer [
       set targetType "crops"
