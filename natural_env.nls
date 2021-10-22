@@ -3,6 +3,7 @@ extensions [rnd cf]
 patches-own [
   ptype
   maturity
+  score
 ]
 
 to update-natural-world
@@ -49,6 +50,8 @@ to update-natural-world
     ptype = "young forest" [maturity + (1. / forest_mature_duration * eps)]
     ptype = "wasteland" [maturity + (1. / forest_regrowth_duration * eps)]
     [maturity])
+    
+    
   ]
   
 end
@@ -90,4 +93,15 @@ to color-patch
   ptype = "crops" [ 65 ]
   ptype = "fire" [ red ]
     [ grey ])
+end
+
+to compute-score
+  let closest-river first sort-on [distance self] patches with [ptype = "river"]
+  
+  set score distance closest-river * 0.1
+  
+end
+
+to setup-patches-score
+  ask patches [compute-score]
 end
