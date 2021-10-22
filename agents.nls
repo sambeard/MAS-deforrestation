@@ -2,6 +2,10 @@ extensions [ cf ]
 breed [ citizens citizen ]
 breed [ farmers farmer]
 
+globals [
+  patch-list
+]
+
 citizens-own [target targetType]; citizen parameters
 
 farmers-own [target targetType]; farmers parameters
@@ -10,25 +14,38 @@ farmers-own [target targetType]; farmers parameters
 to setup-agents
   initialize-citizens initial-amount-of-citizens
   initialize-farmers initial-amount-of-farmers
+  setup-free-patches
 end
 
 to update-agents
   ;if count patches with [ ptype = "forestBorder"] = 0 [ stop ]
   ask citizens [
-    ; if target patch has changed 
-    if (not([ptype] of target = targetType)) [set-new-target]
-    ;; if citizen on his target
-    if distance target = 0 [perform-action get-new-action]
-    move-towards-target
+    (cf:ifelse
+      ; if target patch has changed 
+      target = nobody [set-new-target]
+      [ptype] of target != targetType [set-new-target]
+      ;; if citizen on his target
+      distance target = 0 [perform-action get-new-action]
+      [move-towards-target]
+      )
   ]
   
   ask farmers [
+    
     ; if target patch has changed 
     if (not([ptype] of target = targetType)) [set-new-target]
     ;; if farmer on his target
     if distance target = 0 [perform-action get-new-action]
     move-towards-target
   ]
+end
+
+to setup-free-patches
+  set patch-list (reduce [[l p] -> ifelse-value (p = 0) [(list)] [lput p l] ] (list (sort-on [patch-index] patches)))
+end
+
+to-report patch-index
+  report world-width * pycor + pxcor
 end
 
 ;; CITIZEN RELATED
@@ -44,30 +61,27 @@ end
 
 to initialize-citizens [amount]
   create-citizens amount [
-    set shape "person"
-    set size 3
-    set target a-city-patch
-    set targetType "city"
-    let current a-city-patch
-    setxy ([pxcor] of current) ([pycor] of current)
-    face target
+    setup-agent
+    set color 54 ;; yellow
   ]
   ;;show count turtles
 end
 
 to initialize-farmers [amount]
   create-farmers amount [
-    set shape "person"
-    set color 45;;yellow
-    set size 3
-    set target a-city-patch
-    set targetType "city"
-    let current a-city-patch
-    setxy ([pxcor] of current) ([pycor] of current)
-    face target
-    
+    setup-agent
+    set color 45 ;; yellow
   ]
-  
+end
+
+to setup-agent
+  set shape "person"
+  set size 3
+  set target a-city-patch
+  set targetType "city"
+  let current a-city-patch
+  setxy ([pxcor] of current) ([pycor] of current)
+  face target 
 end
 
 to remove-citizen
@@ -83,19 +97,20 @@ end
 to chop-forest
   set ptype "young forest"
   after-change-patch
-  ;ask neighbors with [ ptype = "forest"] [set ptype "forestBorder" color-patch]
 end
 
 to planting-crops
-  set ptype "crops"
+  set ptype "farmland"
   after-change-patch
 end
 
 to move-towards-target
+  if(target != nobody)[
     face target
     ifelse distance target <= movement-speed
       [ move-to target ]
       [ fd movement-speed ]
+  ]
 end
 
 to perform-action
@@ -108,25 +123,29 @@ to perform-action
 end
 
 to get-new-action
-  if breed = farmers[
+  if is-farmer? self [
     set targetType ifelse-value (get-ptype = "city")
     ["wasteland"]
     ["city"]
     set-new-target
   ]
-  if breed = citizens[
+  if is-citizen? self [
     set targetType ifelse-value (get-ptype = "city")
     ["old forest"]
     ["city"]
-     set-new-target
+    set-new-target
   ]
   
 end
 
 to set-new-target
+  let prev target
   let tt targetType
-  set target closest-patch (patches with [ptype = tt])
- 
+  set target closest-patch unattended-patches with [ptype = tt]
+  if(prev != nobody)
+    [ set patch-list replace-item [patch-index] of prev patch-list prev ]
+  if(target != nobody)
+    [ set patch-list replace-item [patch-index] of target patch-list nobody ]
 end
 
 ;; PATCH RELATED
@@ -135,9 +154,18 @@ to-report get-ptype
   report [ptype] of patch-here
 end
 
+to-report unattended-patches
+  ; patch-set automatically filters out all non patch entries (eg nobodies)
+  report patch-set patch-list 
+end
+  
+
 to-report closest-patch [patchset]
-  let ph patch-here
-  report first sort-on [distance ph] patchset
+  ifelse (any? patchset )[
+    let ph patch-here
+    report first sort-on [distance ph] patchset
+  ]
+  [report nobody]
 end
 
 to-report a-city-patch
