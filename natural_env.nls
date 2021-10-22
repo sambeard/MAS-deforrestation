@@ -84,6 +84,7 @@ to after-change-patch
   color-patch
 end
 
+; don't use when ignited
 to color-patch
   set pcolor (cf:ifelse-value
   ptype = "young forest" [ 53 ]

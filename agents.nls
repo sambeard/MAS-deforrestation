@@ -18,25 +18,15 @@ to setup-agents
 end
 
 to update-agents
-  ;if count patches with [ ptype = "forestBorder"] = 0 [ stop ]
-  ask citizens [
+  ask turtles [
     (cf:ifelse
-      ; if target patch has changed 
       target = nobody [set-new-target]
+      ; if target patch has changed 
       [ptype] of target != targetType [set-new-target]
       ;; if citizen on his target
       distance target = 0 [perform-action get-new-action]
       [move-towards-target]
       )
-  ]
-  
-  ask farmers [
-    
-    ; if target patch has changed 
-    if (not([ptype] of target = targetType)) [set-new-target]
-    ;; if farmer on his target
-    if distance target = 0 [perform-action get-new-action]
-    move-towards-target
   ]
 end
 
