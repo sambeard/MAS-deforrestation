@@ -25,8 +25,9 @@ to update-agents
   ask farmers [
     ; if target patch has changed 
     if (not([ptype] of target = targetType)) [set-new-target]
-    ;; if citizen on his target
+    ;; if farmer on his target
     if distance target = 0 [perform-action get-new-action]
+    move-towards-target
   ]
 end
 
