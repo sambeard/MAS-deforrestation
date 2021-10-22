@@ -28,6 +28,8 @@ to update-agents
       [move-towards-target]
       )
   ]
+  
+  call-farmers
 end
 
 to setup-free-patches
@@ -94,6 +96,16 @@ to planting-crops
   after-change-patch
 end
 
+to harvest-crops
+  let rand = random 100
+  
+  ifelse rand < probability-to-turn-into-wasteland
+    [set ptype "wasteland"] ;; maybe turn it directly to farmland ? or 1/2 chance to turn it into farmland or wasteland ?
+    [set ptype "farmland"]
+  after-change-patch
+
+end
+
 to move-towards-target
   if(target != nobody)[
     face target
@@ -103,11 +115,14 @@ to move-towards-target
   ]
 end
 
+
+
 to perform-action
   let pt get-ptype
   (cf:ifelse
     pt = "old forest" [chop-forest]
     pt = "wasteland" [planting-crops]
+    pt = "crops" [harvest-crops]
     []
   )
 end
@@ -165,3 +180,17 @@ end
 to-report a-wasteland-patch
   report one-of patches with [ptype = "wasteland"]
 end
+
+
+to call-farmers
+  ask patches with [ptype = "crops"] [
+    let closest-farmer min-one-of farmers [distance myself]
+    
+    ask closest-farmer [
+      set targetType "crops"
+      set target myself 
+    ]   
+  ]
+end
+
+
