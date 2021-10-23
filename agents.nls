@@ -1,18 +1,17 @@
 extensions [ cf ]
-breed [ citizens citizen ]
+breed [ forresters forrester ]
 breed [ farmers farmer]
 
 globals [
   patch-list
 ]
 
-citizens-own [target targetType]; citizen parameters
-
-farmers-own [target targetType seeds]; farmers parameters
+turtles-own [ target targetType task task-list inventory ]; forrester parameters
+farmers-own [ seeds ]; farmers parameters
 
 
 to setup-agents
-  initialize-citizens initial-amount-of-citizens
+  initialize-forresters initial-amount-of-forresters
   initialize-farmers initial-amount-of-farmers
   setup-free-patches
 end
@@ -20,39 +19,29 @@ end
 to update-agents
   ask turtles [
     (cf:ifelse
+      task = "" [get-new-task]
       target = nobody [set-new-target]
       ; if target patch has changed 
-      [ptype] of target != targetType [set-new-target]
-      ;; if citizen on his target
-      distance target = 0 [perform-action get-new-action]
+      [ptype] of target != get-patch-type-for-task task [set-new-target]
+      ;; if forrester on his target
+      distance target = 0 [perform-task release-target target]
       [move-towards-target]
       )
   ]
-  
-  call-farmers
 end
-
-to setup-free-patches
-  set patch-list (reduce [[l p] -> ifelse-value (p = 0) [(list)] [lput p l] ] (list (sort-on [patch-index] patches)))
-end
-
-to-report patch-index
-  report world-width * pycor + pxcor
-end
-
-;; CITIZEN RELATED
+;; forrester RELATED
 ;; ===================
 
-to add-citizen
-  initialize-citizens 1
+to add-forrester
+  initialize-forresters 1
 end
 
 to add-farmer
   initialize-farmers 1
 end
 
-to initialize-citizens [amount]
-  create-citizens amount [
+to initialize-forresters [amount]
+  create-forresters amount [
     setup-agent
     set color 54 ;; yellow
   ]
@@ -71,14 +60,15 @@ to setup-agent
   set shape "person"
   set size 3
   set target a-city-patch
-  set targetType "city"
+  set task "go home"
+  set task-list []
   let current a-city-patch
   setxy ([pxcor] of current) ([pycor] of current)
   face target 
 end
 
-to remove-citizen
-  ask one-of citizens [die]
+to remove-forrester
+  ask one-of forresters [die]
 end
 
 to remove-farmer
@@ -87,46 +77,48 @@ end
 
 ;; TASK RELATED
 ;; ==================
-to-report get-patch-type-for-task [task]
+to-report get-patch-type-for-task [t]
   report (ifelse-value
-    task = "chop wood" ["old forest"]
-    task = "get water" ["river"]
-    task = "water patch" ["farmland"]
-    task = "harvest crops" ["crops"]
-    task = "ignite patch" ["young forest"]
-    task = "go home" ["city"]
+    t = "chop forest" ["old forest"]
+    t = "plant seeds" ["wasteland"]
+    ;t = "get water" ["river"]
+    ;t = "water patch" ["farmland"]
+    t = "harvest crops" ["crops"]
+    t = "ignite patch" ["young forest"]
+    t = "get seeds" ["city"]
+    t = "deliver crops" ["city"]
+    t = "deliver logs" ["city"]
+    t = "go home" ["city"]
     [ nobody] ; break on this
   )
 end 
 
 to chop-forest
   set ptype "young forest"
+  set inventory "logs"
   after-change-patch
 end
 
 to planting-crops
-  
-  ifelse seeds > 0
-  [set ptype "farmland"
+  set ptype "farmland"
   after-change-patch
   set seeds seeds - 1
-  ]
-  [
-    set targetType "city"
-    set target a-city-patch
-    show "no more seeds"
-    set color 15; yellow
-  ]
+  if(seeds = 0) [set color red]
 end
-
+to get-seeds
+  set seeds max-seeds
+  set color 45; yellow
+  set task ""
+end
 to harvest-crops
   let rand random 100
   
   ifelse rand > probability-to-turn-into-wasteland and seeds > 0
     [set ptype "farmland"]
-  
-  after-change-patch
+    [set ptype "wasteland"]
 
+  set inventory "crops"
+  after-change-patch
 end
 
 to move-towards-target
@@ -139,49 +131,75 @@ to move-towards-target
 end
 
 
-
-to perform-action
-  let pt get-ptype
+to perform-task
   (cf:ifelse
-    pt = "old forest" [chop-forest]
-    pt = "wasteland" [planting-crops]
-    pt = "crops" [harvest-crops]
+    task = "chop forest" [chop-forest]
+    task = "plant seeds" [planting-crops]
+    task = "harvest crops" [harvest-crops]
+    task = "get seeds" [get-seeds]
+    task = "deliver crops" [ set inventory ""];; also implement 'selling' of crops
+    task = "deliver logs" [ set inventory ""];; also implement 'selling' of logs
+    task = "go home" []
     []
   )
+  set task ""
 end
 
-to get-new-action
-  if is-farmer? self [
-    
-    if get-ptype = "city"[
-      set seeds max-seeds
-      set color 45; yellow
-      set targetType "wasteland"
+to get-new-task 
+  if empty? task-list
+  [
+    ifelse is-farmer? self [
+      let field closest-patch patches with [ptype = "crops" and (item patch-index patch-list) != nobody]
+      show field
+      let wasteland closest-patch patches with [ptype = "wasteland" and (item patch-index patch-list) != nobody]
+      set task-list lput (ifelse-value 
+        field != nobody [(list "harvest crops" field)]
+        inventory = "crops" [(list "deliver crops" nobody)]
+        seeds = 0 [(list "get seeds" nobody)]  
+        wasteland != nobody [(list "plant seeds" field)]  
+        [(list "go home" nobody)]   
+      ) task-list
+      show task-list
     ]
-    
-    ;set targetType ifelse-value (get-ptype = "city")
-    ;["wasteland"]
-   ; ["city"]
-    set-new-target
+    ; is forrester
+    [
+      let forest closest-patch patches with [ptype = "old forest"]
+      set task-list lput (ifelse-value 
+        inventory = "logs" [(list "deliver logs" nobody)]
+        [(list "chop forest" forest)]   
+      ) task-list
+    ]
   ]
-  if is-citizen? self [
-    set targetType ifelse-value (get-ptype = "city")
-    ["old forest"]
-    ["city"]
-    set-new-target
-  ]
-  
+  get-next-task
+  ifelse (target = nobody)
+    [set-new-target]
+    [claim-target target]
+end
+
+to get-next-task
+  let next first task-list
+  set task item 0 next
+  set target item 1 next
+  set task-list butfirst task-list
 end
 
 to set-new-target
-  let prev target
-  let tt targetType
+  let tt get-patch-type-for-task task
   set target closest-patch unattended-patches with [ptype = tt]
-  if(prev != nobody)
-    [ set patch-list replace-item [patch-index] of prev patch-list prev ]
-  if(target != nobody)
-    [ set patch-list replace-item [patch-index] of target patch-list nobody ]
+  ifelse (target = nobody) 
+    ; clear task if no patches left to harvest
+    [if(task = "harvest crops") [set task ""]]
+    [claim-target target]
 end
+
+to release-target [t]
+  set patch-list replace-item [patch-index] of t patch-list t
+end
+
+to claim-target [t]
+  set patch-list replace-item [patch-index] of t patch-list nobody
+end
+
 
 ;; PATCH RELATED
 ;; ===================
@@ -191,7 +209,7 @@ end
 
 to-report unattended-patches
   ; patch-set automatically filters out all non patch entries (eg nobodies)
-  report patch-set patch-list 
+  report patch-set filter is-patch? patch-list 
 end
   
 
@@ -207,20 +225,12 @@ to-report a-city-patch
   report one-of patches with [ptype = "city"]
 end
 
-to-report a-wasteland-patch
-  report one-of patches with [ptype = "wasteland"]
+to setup-free-patches
+  set patch-list (reduce [[l p] -> ifelse-value (p = 0) [(list)] [lput p l] ] (list (sort-on [patch-index] patches)))
 end
 
-
-to call-farmers
-  ask patches with [ptype = "crops"] [
-    let closest-farmer min-one-of farmers with [ptype != "crops"] [distance myself]
-    
-    ask closest-farmer [
-      set targetType "crops"
-      set target myself 
-    ]   
-  ]
+to-report patch-index
+  report world-width * pycor + pxcor
 end
 
 
