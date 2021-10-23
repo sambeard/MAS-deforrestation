@@ -345,7 +345,7 @@ BUTTON
 135
 368
 +
-add-citizen
+add-forrester
 NIL
 1
 T
@@ -362,7 +362,7 @@ BUTTON
 74
 368
 -
-remove-citizen
+remove-forrester
 NIL
 1
 T
@@ -378,8 +378,8 @@ SLIDER
 222
 202
 255
-initial-amount-of-citizens
-initial-amount-of-citizens
+initial-amount-of-forresters
+initial-amount-of-forresters
 0
 100
 0.0
@@ -394,7 +394,7 @@ MONITOR
 145
 324
 amount of citizens
-count citizens
+count forresters
 0
 1
 12
