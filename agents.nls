@@ -122,8 +122,7 @@ end
 to harvest-crops
   let rand random 100
   
-  ifelse rand < probability-to-turn-into-wasteland
-    [set ptype "wasteland"] ;; maybe turn it directly to farmland ? or 1/2 chance to turn it into farmland or wasteland ?
+  ifelse rand > probability-to-turn-into-wasteland and seeds > 0
     [set ptype "farmland"]
   
   after-change-patch
