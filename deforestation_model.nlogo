@@ -601,8 +601,10 @@ true
 PENS
 "Forestry" 1.0 0 -14333415 true "" "plot forestry"
 "Harvesting" 1.0 0 -13840069 true "" "plot harvesting"
-"Planting" 1.0 0 -5509967 true "" "plot planting"
+"Planting" 1.0 0 -5509967 true "" "plot planting-seeds"
 "Idle" 1.0 0 -9276814 true "" "plot idling"
+"Replanting forest" 1.0 0 -13210332 true "" "plot planting-trees"
+"Igniting" 1.0 0 -2674135 true "" "plot igniting"
 
 SLIDER
 1139
