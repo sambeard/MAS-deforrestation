@@ -337,16 +337,16 @@ TEXTBOX
 197
 169
 215
-Citizen parameters
+Agent parameters
 12
 0.0
 1
 
 BUTTON
-72
-400
-127
-433
+77
+333
+132
+366
 +
 add-forrester
 NIL
@@ -360,10 +360,10 @@ NIL
 1
 
 BUTTON
-11
-400
-66
-433
+16
+333
+71
+366
 -
 remove-forrester
 NIL
@@ -377,10 +377,10 @@ NIL
 1
 
 SLIDER
-9
-287
-209
-320
+14
+220
+214
+253
 initial-amount-of-forresters
 initial-amount-of-forresters
 0
@@ -392,10 +392,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-9
-340
-137
-389
+14
+273
+142
+322
 amount of citizens
 count forresters
 0
@@ -403,10 +403,10 @@ count forresters
 12
 
 SLIDER
-10
-448
-182
-481
+16
+526
+188
+559
 movement-speed
 movement-speed
 0
@@ -418,20 +418,20 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-17
-523
-167
-541
+20
+625
+170
+643
 Farmers parameters\n
 11
 0.0
 1
 
 SLIDER
-13
-551
-200
-584
+15
+374
+202
+407
 initial-amount-of-farmers
 initial-amount-of-farmers
 0
@@ -443,10 +443,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-14
-597
-124
-642
+16
+420
+126
+465
 Amout of farmers
 count farmers
 17
@@ -454,10 +454,10 @@ count farmers
 11
 
 BUTTON
-13
-651
-68
-684
+15
+474
+70
+507
 -
 remove-farmer
 NIL
@@ -471,10 +471,10 @@ NIL
 1
 
 BUTTON
-76
-651
-131
-684
+78
+474
+133
+507
 +
 add-farmer
 NIL
@@ -518,10 +518,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-1176
-175
-1414
-208
+17
+740
+255
+773
 probability-to-turn-into-wasteland
 probability-to-turn-into-wasteland
 0
@@ -533,10 +533,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-12
-698
-184
-731
+18
+653
+190
+686
 max-seeds
 max-seeds
 0
@@ -569,10 +569,10 @@ PENS
 "wasteland" 1.0 0 -5207188 true "" "plot count patches with [ptype = \"wasteland\"]"
 
 SLIDER
-8
-239
-216
-272
+16
+572
+224
+605
 max-travel-distance
 max-travel-distance
 1
@@ -617,6 +617,21 @@ plot-alpha
 .01
 1
 NIL
+HORIZONTAL
+
+SLIDER
+16
+697
+188
+730
+ask-to-light-chance
+ask-to-light-chance
+0
+100
+50.0
+1
+1
+%
 HORIZONTAL
 
 @#$#@#$#@
