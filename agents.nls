@@ -122,7 +122,7 @@ to ask-to-ignite
     if( is-patch? best-patch)
     [
       ; find closest forester
-      let closest-forester min-one-of foresters with [distance best-patch <= max-travel-distance ] [distance best-patch]
+      let closest-forester min-one-of foresters with [distance best-patch <= max-travel-distance and (target = nobody or distance target > 0) and task != "ignite forest"] [distance best-patch]
       ; ask to ignite
       if(is-forester? closest-forester)
       [
@@ -216,6 +216,7 @@ to get-next-task
 end
 
 to set-new-target
+  if(target != nobody) [release-target target]
   let tt get-patch-type-for-task task
   set target ifelse-value (task = "go home")
   [ a-city-patch ]
