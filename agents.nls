@@ -153,9 +153,8 @@ to get-new-task
   if empty? task-list
   [
     ifelse is-farmer? self [
-      let field closest-patch patches with [ptype = "crops" and (item patch-index patch-list) != nobody]
-      show field
-      let wasteland closest-patch patches with [ptype = "wasteland" and (item patch-index patch-list) != nobody]
+      let field closest-patch patches with [ptype = "crops" and (item patch-index patch-list) != nobody and distance myself <= max-travel-distance]
+      let wasteland closest-patch patches with [ptype = "wasteland" and (item patch-index patch-list) != nobody and distance myself <= max-travel-distance]
       set task-list lput (ifelse-value 
         has-inventory? [(list "deliver crops" nobody)]
         field != nobody [(list "harvest crops" field)]
@@ -167,7 +166,7 @@ to get-new-task
     ]
     ; is forrester
     [
-      let forest closest-patch patches with [ptype = "old forest"]
+      let forest closest-patch patches with [ptype = "old forest" and distance myself <= max-travel-distance]
       set task-list lput (ifelse-value 
         inventory = "logs" [(list "deliver logs" nobody)]
         forest != nobody [(list "chop forest" forest)]
@@ -190,7 +189,9 @@ end
 
 to set-new-target
   let tt get-patch-type-for-task task
-  set target closest-patch unattended-patches with [ptype = tt]
+  set target ifelse-value (task = "go home")
+  [ a-city-patch ]
+  [ closest-patch unattended-patches with [ptype = tt and ifelse-value (tt = "city")[true][distance myself <= max-travel-distance ]]]
   ifelse (target = nobody) 
     ; clear task if no patches left to harvest
     [if(task = "harvest crops") [set task ""]]
