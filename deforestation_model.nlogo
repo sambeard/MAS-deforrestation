@@ -604,6 +604,21 @@ PENS
 "Planting" 1.0 0 -5509967 true "" "plot planting"
 "Idle" 1.0 0 -9276814 true "" "plot idling"
 
+SLIDER
+1139
+855
+1311
+888
+plot-alpha
+plot-alpha
+0
+1
+0.1
+.01
+1
+NIL
+HORIZONTAL
+
 @#$#@#$#@
 ## WHAT IS IT?
 
