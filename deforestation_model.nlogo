@@ -3,6 +3,7 @@ extensions [rnd cf shell]
 __includes [
   "natural_env.nls"
   "agents.nls"
+  "plotter.nls"
 ]
 
 to setup
@@ -13,6 +14,7 @@ to setup
   import-world "patches.csv"
   setup-agents
   setup-patches-score
+  setup-plot
   reset-ticks
 end
 
@@ -23,6 +25,7 @@ end
 to go
   update-natural-world
   update-agents
+  update-plot
   tick
 end
 @#$#@#$#@
@@ -283,10 +286,10 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-1163
-472
-1313
-668
+617
+693
+767
+889
 Future improvements:\n\nHave a global or local (different scale) climate system influence the growth rate/ spread rate\n\nmake maturity for fire a decreasing value that starts with a value depending on the originating tile\n\nTransportation is mainly via boats
 11
 0.0
@@ -340,10 +343,10 @@ Citizen parameters
 1
 
 BUTTON
-80
-335
-135
-368
+72
+400
+127
+433
 +
 add-forrester
 NIL
@@ -357,10 +360,10 @@ NIL
 1
 
 BUTTON
-19
-335
-74
-368
+11
+400
+66
+433
 -
 remove-forrester
 NIL
@@ -374,25 +377,25 @@ NIL
 1
 
 SLIDER
-17
-222
-202
-255
+9
+287
+209
+320
 initial-amount-of-forresters
 initial-amount-of-forresters
 0
 100
-0.0
+81.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-17
-275
-145
-324
+9
+340
+137
+389
 amount of citizens
 count forresters
 0
@@ -400,50 +403,50 @@ count forresters
 12
 
 SLIDER
-18
-383
-190
-416
+10
+448
+182
+481
 movement-speed
 movement-speed
 0
 100
-1.0
+4.0
 1
 1
 NIL
 HORIZONTAL
 
 TEXTBOX
-25
-458
-175
-476
+17
+523
+167
+541
 Farmers parameters\n
 11
 0.0
 1
 
 SLIDER
-21
-486
-208
-519
+13
+551
+200
+584
 initial-amount-of-farmers
 initial-amount-of-farmers
 0
 100
-17.0
+42.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-22
-532
-132
-577
+14
+597
+124
+642
 Amout of farmers
 count farmers
 17
@@ -451,10 +454,10 @@ count farmers
 11
 
 BUTTON
-21
-586
-76
-619
+13
+651
+68
+684
 -
 remove-farmer
 NIL
@@ -468,10 +471,10 @@ NIL
 1
 
 BUTTON
-84
-586
-139
-619
+76
+651
+131
+684
 +
 add-farmer
 NIL
@@ -523,26 +526,83 @@ probability-to-turn-into-wasteland
 probability-to-turn-into-wasteland
 0
 100
-49.0
+86.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-20
-633
-192
-666
+12
+698
+184
+731
 max-seeds
 max-seeds
 0
 50
-5.0
+4.0
 1
 1
 NIL
 HORIZONTAL
+
+PLOT
+1138
+290
+1466
+557
+Ecology stats
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"old forest" 1.0 0 -15456499 true "" "plot count patches with [ptype = \"old forest\"]"
+"young forest" 1.0 0 -13210332 true "" "plot count patches with [ptype = \"young forest\"]"
+"farmland" 1.0 0 -8330359 true "" "plot count patches with [ptype = \"farmland\"]"
+"wasteland" 1.0 0 -5207188 true "" "plot count patches with [ptype = \"wasteland\"]"
+
+SLIDER
+8
+239
+216
+272
+max-travel-distance
+max-travel-distance
+1
+world-width * sqrt 2
+21.0
+1
+1
+patches
+HORIZONTAL
+
+PLOT
+1138
+573
+1469
+839
+Occupancies
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"Forrestry" 1.0 0 -14333415 true "" "plot forrestry"
+"Harvesting" 1.0 0 -13840069 true "" "plot harvesting"
+"Planting" 1.0 0 -5509967 true "" "plot planting"
+"Idle" 1.0 0 -9276814 true "" "plot idling"
 
 @#$#@#$#@
 ## WHAT IS IT?
