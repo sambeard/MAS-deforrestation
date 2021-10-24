@@ -86,7 +86,7 @@ to-report get-patch-type-for-task [t]
     t = "chop forest" ["old forest"]
     t = "plant seeds" ["wasteland"]
     t = "harvest crops" ["crops"]
-    t = "ignite patch" ["young forest"]
+    t = "ignite forest" ["young forest"]
     t = "get seeds" ["city"]
     t = "deliver crops" ["city"]
     t = "deliver logs" ["city"]
@@ -107,11 +107,41 @@ to planting-crops
   set seeds seeds - 1
   if(seeds = 0) [set color red]
 end
+
 to get-seeds
   set seeds max-seeds
   set color 45; yellow
   set task ""
 end
+
+to ask-to-ignite
+  if (random 100 < ask-to-light-chance)
+  [
+    ; choose best spot
+    let best-patch min-one-of (patches with [ptype = "young forest" and (item patch-index patch-list) != nobody and (distance myself <= max-travel-distance)] ) [distance myself]
+    if( is-patch? best-patch)
+    [
+      ; find closest forester
+      let closest-forester min-one-of foresters with [distance best-patch <= max-travel-distance ] [distance best-patch]
+      ; ask to ignite
+      if(is-forester? closest-forester)
+      [
+        ask closest-forester [
+          ; set current work aside
+          let ctask task
+          let ctarget target
+          set task-list fput (list ctask ctarget) task-list
+          ; set new task
+          set task "ignite forest"
+          set target best-patch
+          claim-target target
+          show word "will set fire to: " best-patch
+        ]
+      ]
+    ]
+  ]
+end
+
 to harvest-crops
   let rand random 100
   
@@ -139,9 +169,10 @@ to perform-task
     task = "plant seeds" [planting-crops]
     task = "harvest crops" [harvest-crops]
     task = "get seeds" [get-seeds]
+    task = "ignite forest" [ignite]
     task = "deliver crops" [ set inventory ""];; also implement 'selling' of crops
     task = "deliver logs" [ set inventory ""];; also implement 'selling' of logs
-    task = "go home" []
+    task = "go home" [ask-to-ignite]
     []
   )
   set task ""
