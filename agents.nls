@@ -29,7 +29,7 @@ to update-agents
       )
   ]
 end
-;; forrester RELATED
+;; AGENT RELATED
 ;; ===================
 
 to add-forrester
@@ -85,8 +85,6 @@ to-report get-patch-type-for-task [t]
   report (ifelse-value
     t = "chop forest" ["old forest"]
     t = "plant seeds" ["wasteland"]
-    ;t = "get water" ["river"]
-    ;t = "water patch" ["farmland"]
     t = "harvest crops" ["crops"]
     t = "ignite patch" ["young forest"]
     t = "get seeds" ["city"]
