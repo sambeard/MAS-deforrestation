@@ -348,7 +348,7 @@ BUTTON
 132
 366
 +
-add-forrester
+add-forester
 NIL
 1
 T
@@ -365,7 +365,7 @@ BUTTON
 71
 366
 -
-remove-forrester
+remove-forester
 NIL
 1
 T
@@ -381,8 +381,8 @@ SLIDER
 220
 214
 253
-initial-amount-of-forresters
-initial-amount-of-forresters
+initial-amount-of-foresters
+initial-amount-of-foresters
 0
 100
 81.0
@@ -394,10 +394,10 @@ HORIZONTAL
 MONITOR
 14
 273
-142
+153
 322
-amount of citizens
-count forresters
+amount of foresters
+count foresters
 0
 1
 12
@@ -599,7 +599,7 @@ true
 true
 "" ""
 PENS
-"Forrestry" 1.0 0 -14333415 true "" "plot forrestry"
+"Forestry" 1.0 0 -14333415 true "" "plot forestry"
 "Harvesting" 1.0 0 -13840069 true "" "plot harvesting"
 "Planting" 1.0 0 -5509967 true "" "plot planting"
 "Idle" 1.0 0 -9276814 true "" "plot idling"

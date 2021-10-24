@@ -1,17 +1,17 @@
 extensions [ cf ]
-breed [ forresters forrester ]
+breed [ foresters forester ]
 breed [ farmers farmer]
 
 globals [
   patch-list
 ]
 
-turtles-own [ target targetType task task-list inventory ]; forrester parameters
+turtles-own [ target targetType task task-list inventory ]; forester parameters
 farmers-own [ seeds ]; farmers parameters
 
 
 to setup-agents
-  initialize-forresters initial-amount-of-forresters
+  initialize-foresters initial-amount-of-foresters
   initialize-farmers initial-amount-of-farmers
   setup-free-patches
 end
@@ -23,7 +23,7 @@ to update-agents
       target = nobody [set-new-target]
       ; if target patch has changed 
       [ptype] of target != get-patch-type-for-task task [set-new-target]
-      ;; if forrester on his target
+      ;; if forester on his target
       distance target = 0 [perform-task release-target target]
       [move-towards-target]
       )
@@ -32,16 +32,16 @@ end
 ;; AGENT RELATED
 ;; ===================
 
-to add-forrester
-  initialize-forresters 1
+to add-forester
+  initialize-foresters 1
 end
 
 to add-farmer
   initialize-farmers 1
 end
 
-to initialize-forresters [amount]
-  create-forresters amount [
+to initialize-foresters [amount]
+  create-foresters amount [
     setup-agent
     set color 54 ;; yellow
   ]
@@ -67,8 +67,8 @@ to setup-agent
   face target 
 end
 
-to remove-forrester
-  ask one-of forresters [die]
+to remove-forester
+  ask one-of foresters [die]
 end
 
 to remove-farmer
@@ -160,9 +160,8 @@ to get-new-task
         wasteland != nobody [(list "plant seeds" field)]  
         [(list "go home" nobody)]   
       ) task-list
-      show task-list
     ]
-    ; is forrester
+    ; is forester
     [
       let forest closest-patch patches with [ptype = "old forest" and distance myself <= max-travel-distance]
       set task-list lput (ifelse-value 
