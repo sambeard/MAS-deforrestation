@@ -170,7 +170,8 @@ to get-new-task
       let forest closest-patch patches with [ptype = "old forest"]
       set task-list lput (ifelse-value 
         inventory = "logs" [(list "deliver logs" nobody)]
-        [(list "chop forest" forest)]   
+        forest != nobody [(list "chop forest" forest)]
+        [(list "go home" nobody)]   
       ) task-list
     ]
   ]
