@@ -75,6 +75,10 @@ to remove-farmer
   ask one-of farmers [die]
 end
 
+to-report has-inventory?
+  report inventory != ""
+end
+
 ;; TASK RELATED
 ;; ==================
 to-report get-patch-type-for-task [t]
@@ -153,8 +157,8 @@ to get-new-task
       show field
       let wasteland closest-patch patches with [ptype = "wasteland" and (item patch-index patch-list) != nobody]
       set task-list lput (ifelse-value 
+        has-inventory? [(list "deliver crops" nobody)]
         field != nobody [(list "harvest crops" field)]
-        inventory = "crops" [(list "deliver crops" nobody)]
         seeds = 0 [(list "get seeds" nobody)]  
         wasteland != nobody [(list "plant seeds" field)]  
         [(list "go home" nobody)]   
