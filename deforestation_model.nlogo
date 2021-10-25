@@ -319,7 +319,7 @@ CHOOSER
 175
 world_file
 world_file
-"world_bmp" "world_2"
+"world_1" "world_2" "world_3"
 0
 
 TEXTBOX
