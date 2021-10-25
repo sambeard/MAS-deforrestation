@@ -631,6 +631,17 @@ ask-to-light-chance
 0
 100
 50.0
+
+SLIDER
+13
+504
+195
+537
+reforest-chance
+reforest-chance
+0
+100
+0.0
 1
 1
 %

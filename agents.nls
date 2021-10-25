@@ -84,6 +84,7 @@ end
 to-report get-patch-type-for-task [t]
   report (ifelse-value
     t = "chop forest" ["old forest"]
+    t = "replant forest" ["wasteland"]
     t = "plant seeds" ["wasteland"]
     t = "harvest crops" ["crops"]
     t = "ignite forest" ["young forest"]
@@ -140,7 +141,12 @@ to ask-to-ignite
         ]
       ]
     ]
-  ]
+  ]  
+end
+
+to replant-forest
+  set ptype "young forest"
+  after-change-patch
 end
 
 to harvest-crops
@@ -169,11 +175,12 @@ to perform-task
     task = "chop forest" [chop-forest]
     task = "plant seeds" [planting-crops]
     task = "harvest crops" [harvest-crops]
+    task = "replant forest" [replant-forest]
     task = "get seeds" [get-seeds]
     task = "ignite forest" [ignite]
     task = "deliver crops" [ set inventory ""];; also implement 'selling' of crops
     task = "deliver logs" [ set inventory ""];; also implement 'selling' of logs
-    task = "go home" [ask-to-ignite]
+    task = "go home" [if is-farmer? self [ask-to-ignite]]
     []
   )
   set task ""
@@ -182,6 +189,7 @@ end
 to get-new-task 
   if empty? task-list
   [
+    let wasteland closest-available-patch "wasteland"
     ifelse is-farmer? self [
       let field closest-available-patch "crops"
       let young-forest closest-available-patch "young forest"
@@ -199,6 +207,7 @@ to get-new-task
       set task-list lput (ifelse-value 
         inventory = "logs" [(list "deliver logs" nobody)]
         old-forest != nobody [(list "chop forest" old-forest)]
+        wasteland != nobody and (random 100 < reforest-chance) [(list "replant forest" wasteland)]
         [(list "go home" nobody)]   
       ) task-list
     ]
