@@ -131,6 +131,7 @@ to ask-to-ignite
           let ctask task
           let ctarget target
           set task-list fput (list ctask ctarget) task-list
+          release-target ctarget
           ; set new task
           set task "ignite forest"
           set target best-patch
@@ -182,8 +183,8 @@ to get-new-task
   if empty? task-list
   [
     ifelse is-farmer? self [
-      let field closest-patch patches with [ptype = "crops" and (item patch-index patch-list) != nobody and distance myself <= max-travel-distance]
-      let wasteland closest-patch patches with [ptype = "wasteland" and (item patch-index patch-list) != nobody and distance myself <= max-travel-distance]
+      let field closest-available-patch "crops"
+      let young-forest closest-available-patch "young forest"
       set task-list lput (ifelse-value 
         has-inventory? [(list "deliver crops" nobody)]
         field != nobody [(list "harvest crops" field)]
@@ -194,10 +195,10 @@ to get-new-task
     ]
     ; is forester
     [
-      let forest closest-patch patches with [ptype = "old forest" and distance myself <= max-travel-distance]
+      let old-forest closest-available-patch "old forest"
       set task-list lput (ifelse-value 
         inventory = "logs" [(list "deliver logs" nobody)]
-        forest != nobody [(list "chop forest" forest)]
+        old-forest != nobody [(list "chop forest" old-forest)]
         [(list "go home" nobody)]   
       ) task-list
     ]
