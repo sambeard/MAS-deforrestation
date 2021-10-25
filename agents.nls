@@ -228,11 +228,13 @@ to set-new-target
 end
 
 to release-target [t]
-  set patch-list replace-item [patch-index] of t patch-list t
+  if(is-patch? t)
+  [set patch-list replace-item [patch-index] of t patch-list t]
 end
 
 to claim-target [t]
-  set patch-list replace-item [patch-index] of t patch-list nobody
+  if(is-patch? t)
+  [set patch-list replace-item [patch-index] of t patch-list nobody]
 end
 
 
