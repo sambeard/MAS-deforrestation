@@ -333,22 +333,22 @@ World file generation
 1
 
 TEXTBOX
-19
-197
-169
-215
-Citizen parameters
+17
+324
+167
+342
+Forester parameters
 12
 0.0
 1
 
 BUTTON
-72
-400
-127
-433
+75
+460
+130
+493
 +
-add-forrester
+add-forester
 NIL
 1
 T
@@ -360,12 +360,12 @@ NIL
 1
 
 BUTTON
-11
-400
-66
-433
+14
+460
+69
+493
 -
-remove-forrester
+remove-forester
 NIL
 1
 T
@@ -377,76 +377,76 @@ NIL
 1
 
 SLIDER
-9
-287
-209
-320
-initial-amount-of-forresters
-initial-amount-of-forresters
+12
+347
+212
+380
+initial-amount-of-foresters
+initial-amount-of-foresters
 0
 100
-81.0
+90.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-9
-340
-137
-389
-amount of citizens
-count forresters
+12
+400
+151
+449
+amount of foresters
+count foresters
 0
 1
 12
 
 SLIDER
 10
-448
+223
 182
-481
+256
 movement-speed
 movement-speed
 0
 100
-4.0
+3.0
 1
 1
 NIL
 HORIZONTAL
 
 TEXTBOX
-17
-523
-167
-541
+33
+553
+183
+571
 Farmers parameters\n
 11
 0.0
 1
 
 SLIDER
-13
-551
-200
-584
+10
+577
+197
+610
 initial-amount-of-farmers
 initial-amount-of-farmers
 0
 100
-42.0
+74.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-14
-597
-124
-642
+11
+623
+121
+668
 Amout of farmers
 count farmers
 17
@@ -454,10 +454,10 @@ count farmers
 11
 
 BUTTON
-13
-651
-68
-684
+10
+677
+65
+710
 -
 remove-farmer
 NIL
@@ -471,10 +471,10 @@ NIL
 1
 
 BUTTON
-76
-651
-131
-684
+73
+677
+128
+710
 +
 add-farmer
 NIL
@@ -518,30 +518,30 @@ NIL
 HORIZONTAL
 
 SLIDER
-1176
-175
-1414
-208
+9
+803
+247
+836
 probability-to-turn-into-wasteland
 probability-to-turn-into-wasteland
 0
 100
-86.0
+20.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-12
-698
-184
-731
+10
+716
+182
+749
 max-seeds
 max-seeds
 0
 50
-4.0
+11.0
 1
 1
 NIL
@@ -569,15 +569,15 @@ PENS
 "wasteland" 1.0 0 -5207188 true "" "plot count patches with [ptype = \"wasteland\"]"
 
 SLIDER
-8
-239
-216
-272
+10
+269
+218
+302
 max-travel-distance
 max-travel-distance
 1
 world-width * sqrt 2
-21.0
+30.0
 1
 1
 patches
@@ -599,10 +599,12 @@ true
 true
 "" ""
 PENS
-"Forrestry" 1.0 0 -14333415 true "" "plot forrestry"
+"Forestry" 1.0 0 -14333415 true "" "plot forestry"
 "Harvesting" 1.0 0 -13840069 true "" "plot harvesting"
-"Planting" 1.0 0 -5509967 true "" "plot planting"
+"Planting" 1.0 0 -5509967 true "" "plot planting-seeds"
 "Idle" 1.0 0 -9276814 true "" "plot idling"
+"Replanting forest" 1.0 0 -13210332 true "" "plot planting-trees"
+"Igniting" 1.0 0 -2674135 true "" "plot igniting"
 
 SLIDER
 1139
@@ -617,6 +619,46 @@ plot-alpha
 .01
 1
 NIL
+HORIZONTAL
+
+SLIDER
+8
+760
+180
+793
+ask-to-light-chance
+ask-to-light-chance
+0
+100
+60.0
+1
+1
+%
+HORIZONTAL
+
+TEXTBOX
+20
+197
+170
+215
+Agent parameters
+11
+0.0
+1
+
+SLIDER
+13
+504
+195
+537
+reforest-chance
+reforest-chance
+0
+100
+81.0
+1
+1
+%
 HORIZONTAL
 
 @#$#@#$#@

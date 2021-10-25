@@ -1,17 +1,17 @@
 extensions [ cf ]
-breed [ forresters forrester ]
+breed [ foresters forester ]
 breed [ farmers farmer]
 
 globals [
   patch-list
 ]
 
-turtles-own [ target targetType task task-list inventory ]; forrester parameters
+turtles-own [ target targetType task task-list inventory ]; forester parameters
 farmers-own [ seeds ]; farmers parameters
 
 
 to setup-agents
-  initialize-forresters initial-amount-of-forresters
+  initialize-foresters initial-amount-of-foresters
   initialize-farmers initial-amount-of-farmers
   setup-free-patches
 end
@@ -23,25 +23,25 @@ to update-agents
       target = nobody [set-new-target]
       ; if target patch has changed 
       [ptype] of target != get-patch-type-for-task task [set-new-target]
-      ;; if forrester on his target
+      ;; if forester on his target
       distance target = 0 [perform-task release-target target]
       [move-towards-target]
       )
   ]
 end
-;; forrester RELATED
+;; AGENT RELATED
 ;; ===================
 
-to add-forrester
-  initialize-forresters 1
+to add-forester
+  initialize-foresters 1
 end
 
 to add-farmer
   initialize-farmers 1
 end
 
-to initialize-forresters [amount]
-  create-forresters amount [
+to initialize-foresters [amount]
+  create-foresters amount [
     setup-agent
     set color 54 ;; yellow
   ]
@@ -67,12 +67,16 @@ to setup-agent
   face target 
 end
 
-to remove-forrester
-  ask one-of forresters [die]
+to remove-forester
+  ask one-of foresters [die]
 end
 
 to remove-farmer
   ask one-of farmers [die]
+end
+
+to-report has-inventory?
+  report inventory != ""
 end
 
 ;; TASK RELATED
@@ -80,11 +84,10 @@ end
 to-report get-patch-type-for-task [t]
   report (ifelse-value
     t = "chop forest" ["old forest"]
+    t = "replant forest" ["wasteland"]
     t = "plant seeds" ["wasteland"]
-    ;t = "get water" ["river"]
-    ;t = "water patch" ["farmland"]
     t = "harvest crops" ["crops"]
-    t = "ignite patch" ["young forest"]
+    t = "ignite forest" ["young forest"]
     t = "get seeds" ["city"]
     t = "deliver crops" ["city"]
     t = "deliver logs" ["city"]
@@ -105,11 +108,47 @@ to planting-crops
   set seeds seeds - 1
   if(seeds = 0) [set color red]
 end
+
 to get-seeds
   set seeds max-seeds
   set color 45; yellow
   set task ""
 end
+
+to ask-to-ignite
+  if (random 100 < ask-to-light-chance)
+  [
+    ; choose best spot
+    let best-patch min-one-of (patches with [ptype = "young forest" and (item patch-index patch-list) != nobody and (distance myself <= max-travel-distance)] ) [distance myself]
+    if( is-patch? best-patch)
+    [
+      ; find closest forester
+      let closest-forester min-one-of foresters with [distance best-patch <= max-travel-distance and (target = nobody or distance target > 0) and task != "ignite forest"] [distance best-patch]
+      ; ask to ignite
+      if(is-forester? closest-forester)
+      [
+        ask closest-forester [
+          ; set current work aside
+          let ctask task
+          let ctarget target
+          set task-list fput (list ctask ctarget) task-list
+          release-target ctarget
+          ; set new task
+          set task "ignite forest"
+          set target best-patch
+          claim-target target
+          show word "will set fire to: " best-patch
+        ]
+      ]
+    ]
+  ]  
+end
+
+to replant-forest
+  set ptype "young forest"
+  after-change-patch
+end
+
 to harvest-crops
   let rand random 100
   
@@ -136,10 +175,12 @@ to perform-task
     task = "chop forest" [chop-forest]
     task = "plant seeds" [planting-crops]
     task = "harvest crops" [harvest-crops]
+    task = "replant forest" [replant-forest]
     task = "get seeds" [get-seeds]
+    task = "ignite forest" [ignite]
     task = "deliver crops" [ set inventory ""];; also implement 'selling' of crops
     task = "deliver logs" [ set inventory ""];; also implement 'selling' of logs
-    task = "go home" []
+    task = "go home" [if is-farmer? self [ask-to-ignite]]
     []
   )
   set task ""
@@ -148,25 +189,26 @@ end
 to get-new-task 
   if empty? task-list
   [
+    let wasteland closest-available-patch "wasteland"
     ifelse is-farmer? self [
-      let field closest-patch patches with [ptype = "crops" and (item patch-index patch-list) != nobody]
-      show field
-      let wasteland closest-patch patches with [ptype = "wasteland" and (item patch-index patch-list) != nobody]
+      let field closest-available-patch "crops"
+      let young-forest closest-available-patch "young forest"
       set task-list lput (ifelse-value 
+        has-inventory? [(list "deliver crops" nobody)]
         field != nobody [(list "harvest crops" field)]
-        inventory = "crops" [(list "deliver crops" nobody)]
         seeds = 0 [(list "get seeds" nobody)]  
         wasteland != nobody [(list "plant seeds" field)]  
         [(list "go home" nobody)]   
       ) task-list
-      show task-list
     ]
-    ; is forrester
+    ; is forester
     [
-      let forest closest-patch patches with [ptype = "old forest"]
+      let old-forest closest-available-patch "old forest"
       set task-list lput (ifelse-value 
         inventory = "logs" [(list "deliver logs" nobody)]
-        [(list "chop forest" forest)]   
+        old-forest != nobody [(list "chop forest" old-forest)]
+        wasteland != nobody and (random 100 < reforest-chance) [(list "replant forest" wasteland)]
+        [(list "go home" nobody)]   
       ) task-list
     ]
   ]
@@ -184,8 +226,11 @@ to get-next-task
 end
 
 to set-new-target
+  if(target != nobody) [release-target target]
   let tt get-patch-type-for-task task
-  set target closest-patch unattended-patches with [ptype = tt]
+  set target ifelse-value (task = "go home")
+  [ a-city-patch ]
+  [ closest-patch unattended-patches with [ptype = tt and ifelse-value (tt = "city")[true][distance myself <= max-travel-distance ]]]
   ifelse (target = nobody) 
     ; clear task if no patches left to harvest
     [if(task = "harvest crops") [set task ""]]
@@ -193,11 +238,13 @@ to set-new-target
 end
 
 to release-target [t]
-  set patch-list replace-item [patch-index] of t patch-list t
+  if(is-patch? t)
+  [set patch-list replace-item [patch-index] of t patch-list t]
 end
 
 to claim-target [t]
-  set patch-list replace-item [patch-index] of t patch-list nobody
+  if(is-patch? t)
+  [set patch-list replace-item [patch-index] of t patch-list nobody]
 end
 
 
@@ -212,6 +259,9 @@ to-report unattended-patches
   report patch-set filter is-patch? patch-list 
 end
   
+to-report closest-available-patch [patch-type]
+  report closest-patch patches with [ptype = patch-type and (item patch-index patch-list) != nobody and distance myself <= max-travel-distance]
+end
 
 to-report closest-patch [patchset]
   ifelse (any? patchset )[

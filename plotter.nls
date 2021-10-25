@@ -1,20 +1,24 @@
 globals [
-  forrestry
-  planting
+  forestry
+  planting-seeds
   harvesting
+  igniting
+  planting-trees
   idling  
 ]
 
 to setup-plot
-  set forrestry get-forrestry
-  set planting get-planting
+  set forestry get-forestry
+  set planting-seeds get-planting-seeds
   set harvesting get-harvesting
+  set igniting get-igniting
+  set planting-trees get-planting-trees
   set idling get-idling
 end
 
 to update-plot
-  set forrestry alpha-mix forrestry get-forrestry
-  set planting alpha-mix planting get-planting
+  set forestry alpha-mix forestry get-forestry
+  set planting-seeds alpha-mix planting-seeds get-planting-seeds
   set harvesting alpha-mix harvesting get-harvesting
   set idling alpha-mix idling get-idling
 end
@@ -22,10 +26,10 @@ end
 to-report alpha-mix [a b]
   report (1.0 - plot-alpha) * a + plot-alpha * b
 end
-to-report get-forrestry
+to-report get-forestry
   report count turtles with [task = "chop forest" or task = "deliver logs"]
 end
-to-report get-planting
+to-report get-planting-seeds
   report count turtles with [task = "plant seeds" or task = "get seeds"]
 end
 to-report get-harvesting
@@ -33,4 +37,10 @@ to-report get-harvesting
 end
 to-report get-idling
   report count turtles with [task = "" or task = "go home"]
+end
+to-report get-igniting
+  report count turtles with [task = "ignite forest"]
+end
+to-report get-planting-trees
+  report count turtles with [task = "replant forest"]
 end
