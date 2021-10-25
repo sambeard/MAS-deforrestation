@@ -333,20 +333,20 @@ World file generation
 1
 
 TEXTBOX
-19
-197
-169
-215
-Agent parameters
+17
+324
+167
+342
+Forester parameters
 12
 0.0
 1
 
 BUTTON
-77
-333
-132
-366
+75
+460
+130
+493
 +
 add-forester
 NIL
@@ -360,10 +360,10 @@ NIL
 1
 
 BUTTON
-16
-333
-71
-366
+14
+460
+69
+493
 -
 remove-forester
 NIL
@@ -377,25 +377,25 @@ NIL
 1
 
 SLIDER
-14
-220
-214
-253
+12
+347
+212
+380
 initial-amount-of-foresters
 initial-amount-of-foresters
 0
 100
-81.0
+90.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-14
-273
-153
-322
+12
+400
+151
+449
 amount of foresters
 count foresters
 0
@@ -403,50 +403,50 @@ count foresters
 12
 
 SLIDER
-16
-526
-188
-559
+10
+223
+182
+256
 movement-speed
 movement-speed
 0
 100
-4.0
+3.0
 1
 1
 NIL
 HORIZONTAL
 
 TEXTBOX
-20
-625
-170
-643
+33
+553
+183
+571
 Farmers parameters\n
 11
 0.0
 1
 
 SLIDER
-15
-374
-202
-407
+10
+577
+197
+610
 initial-amount-of-farmers
 initial-amount-of-farmers
 0
 100
-42.0
+74.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-16
-420
-126
-465
+11
+623
+121
+668
 Amout of farmers
 count farmers
 17
@@ -454,10 +454,10 @@ count farmers
 11
 
 BUTTON
-15
-474
-70
-507
+10
+677
+65
+710
 -
 remove-farmer
 NIL
@@ -471,10 +471,10 @@ NIL
 1
 
 BUTTON
-78
-474
-133
-507
+73
+677
+128
+710
 +
 add-farmer
 NIL
@@ -518,30 +518,30 @@ NIL
 HORIZONTAL
 
 SLIDER
-17
-740
-255
-773
+9
+803
+247
+836
 probability-to-turn-into-wasteland
 probability-to-turn-into-wasteland
 0
 100
-86.0
+20.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-18
-653
-190
-686
+10
+716
+182
+749
 max-seeds
 max-seeds
 0
 50
-4.0
+11.0
 1
 1
 NIL
@@ -569,15 +569,15 @@ PENS
 "wasteland" 1.0 0 -5207188 true "" "plot count patches with [ptype = \"wasteland\"]"
 
 SLIDER
-16
-572
-224
-605
+10
+269
+218
+302
 max-travel-distance
 max-travel-distance
 1
 world-width * sqrt 2
-21.0
+30.0
 1
 1
 patches
@@ -622,15 +622,29 @@ NIL
 HORIZONTAL
 
 SLIDER
-16
-697
-188
-730
+8
+760
+180
+793
 ask-to-light-chance
 ask-to-light-chance
 0
 100
-50.0
+60.0
+1
+1
+%
+HORIZONTAL
+
+TEXTBOX
+20
+197
+170
+215
+Agent parameters
+11
+0.0
+1
 
 SLIDER
 13
@@ -641,7 +655,7 @@ reforest-chance
 reforest-chance
 0
 100
-0.0
+81.0
 1
 1
 %
