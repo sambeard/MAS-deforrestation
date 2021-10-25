@@ -249,6 +249,9 @@ to-report unattended-patches
   report patch-set filter is-patch? patch-list 
 end
   
+to-report closest-available-patch [patch-type]
+  report closest-patch patches with [ptype = patch-type and (item patch-index patch-list) != nobody and distance myself <= max-travel-distance]
+end
 
 to-report closest-patch [patchset]
   ifelse (any? patchset )[
