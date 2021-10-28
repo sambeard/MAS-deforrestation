@@ -25,6 +25,7 @@ end
 to go
   update-natural-world
   update-agents
+
   update-plot
   tick
 end
@@ -385,7 +386,7 @@ initial-amount-of-foresters
 initial-amount-of-foresters
 0
 100
-45.0
+57.0
 1
 1
 NIL
@@ -662,10 +663,10 @@ reforest-chance
 HORIZONTAL
 
 PLOT
-517
-705
-836
-911
+510
+638
+829
+844
 Economy value
 NIL
 NIL
@@ -677,67 +678,120 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -612749 true "" "plot sum [money] of turtles"
+"Government" 1.0 0 -612749 true "" "plot government-money"
+"Community" 1.0 0 -7500403 true "" "plot community-money"
 
 SLIDER
-331
-703
-503
-736
+324
+636
+496
+669
 Crops-selling-value
 Crops-selling-value
 0
 100
-20.0
+36.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-332
-742
-504
-775
+325
+675
+497
+708
 Logs-selling-value
 Logs-selling-value
 0
 100
-38.0
+41.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-331
-781
-503
-814
+324
+714
+496
+747
 taxes-value
 taxes-value
 0
 0.25
-0.16
+0.13
 0.01
 1
 NIL
 HORIZONTAL
 
 SLIDER
-331
-820
-503
-853
-help-boost
-help-boost
+324
+753
+496
+786
+living-cost
+living-cost
 0
-5000
-1019.0
+10
+1.5
+0.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+324
+791
+496
+824
+ticks-below-zero
+ticks-below-zero
+0
+100
+5.0
 1
 1
 NIL
 HORIZONTAL
+
+MONITOR
+528
+849
+611
+894
+NIL
+dead-agents
+17
+1
+11
+
+SLIDER
+323
+826
+495
+859
+breeding-money
+breeding-money
+0
+2500
+525.0
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+620
+850
+722
+895
+NIL
+breeded-agents
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?

@@ -4,9 +4,15 @@ breed [ farmers farmer]
 
 globals [
   patch-list
+  government-money
+  community-money
+  last-tick-breed
+  last-tick-zero
+  dead-agents
+  breeded-agents
 ]
 
-turtles-own [ target targetType task task-list inventory money ]; forester parameters
+turtles-own [ target targetType task task-list inventory]; forester parameters
 farmers-own [ seeds ]; farmers parameters
 
 
@@ -14,6 +20,11 @@ to setup-agents
   initialize-foresters initial-amount-of-foresters
   initialize-farmers initial-amount-of-farmers
   setup-free-patches
+  set government-money 1000
+  set community-money 1000
+  set last-tick-breed ticks
+  set last-tick-zero ticks
+  set dead-agents 0
 end
 
 to update-agents
@@ -27,22 +38,40 @@ to update-agents
       distance target = 0 [perform-task release-target target]
       [move-towards-target]
       )
-    pay-income
-    if (sum [money] of turtles) < 0 [set-bankrupcy]
   ]
+    update-community-money
+end
 
+
+to update-community-money
+  set community-money community-money - (count turtles) * living-cost 
+  (cf:ifelse 
+    (community-money) <= 0 and (ticks - last-tick-zero >= ticks-below-zero) [
+      ask one-of turtles [die] 
+      set dead-agents dead-agents + 1
+      set last-tick-zero ticks
+    ]
+    (community-money) <= 0 and (ticks - last-tick-zero < ticks-below-zero)[]
+    (community-money >= 0) or (community-money > 0) [set last-tick-zero ticks]
+  )
+  (cf:ifelse 
+    (community-money) >= breeding-money and (ticks - last-tick-breed >= ticks-below-zero) [
+      let probability random-float 1
+    
+      (cf:ifelse 
+        probability >= 0.5 [add-forester]
+        probability < 0.5 [add-farmer]
+      )
+      set breeded-agents breeded-agents + 1
+      set last-tick-breed ticks
+    ]
+    (community-money) >= breeding-money and (ticks - last-tick-breed < ticks-below-zero)[]
+    (community-money >= breeding-money) or (community-money < breeding-money) [set last-tick-breed ticks]
+   )
 end
 ;; AGENT RELATED
 ;; ===================
 
-to pay-income
-  set money money - money * taxes-value - 0.05
-end
-
-to set-bankrupcy
-  show "BANKRUPCY: international boost"
-  set money help-boost
-end
 
 to add-forester
   initialize-foresters 1
@@ -73,7 +102,6 @@ to setup-agent
   set size 3
   set target a-city-patch
   set task "go home"
-  set money 10
   set task-list []
   let current a-city-patch
   setxy ([pxcor] of current) ([pycor] of current)
@@ -175,8 +203,12 @@ end
 
 to deliver-inventory
   (cf:ifelse 
-    inventory = "logs" [set money money + logs-selling-value] ;;LOGS give 2 money points
-    inventory  = "crops" [set money money + crops-selling-value] ;; Crops give 1 money point
+    inventory = "logs" [
+      set community-money community-money + (logs-selling-value * (1 - taxes-value))
+      set government-money government-money + (logs-selling-value * (taxes-value))
+    ] ;;LOGS give 2 money points
+    inventory  = "crops" [set community-money community-money + (crops-selling-value * (1 - taxes-value))
+      set government-money government-money + (crops-selling-value * (taxes-value))] ;; Crops give 1 money point
     inventory = "" []
   )
   set inventory ""

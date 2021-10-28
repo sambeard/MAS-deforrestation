@@ -45,6 +45,3 @@ to-report get-planting-trees
   report count turtles with [task = "replant forest"]
 end
 
-to-report get-money 
-  report sum [money] of turtles 
-end
