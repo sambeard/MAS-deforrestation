@@ -6,7 +6,7 @@ globals [
   patch-list
 ]
 
-turtles-own [ target targetType task task-list inventory ]; forester parameters
+turtles-own [ target targetType task task-list inventory money ]; forester parameters
 farmers-own [ seeds ]; farmers parameters
 
 
@@ -27,10 +27,22 @@ to update-agents
       distance target = 0 [perform-task release-target target]
       [move-towards-target]
       )
+    pay-income
+    if (sum [money] of turtles) < 0 [set-bankrupcy]
   ]
+
 end
 ;; AGENT RELATED
 ;; ===================
+
+to pay-income
+  set money money - money * taxes-value - 0.05
+end
+
+to set-bankrupcy
+  show "BANKRUPCY: international boost"
+  set money help-boost
+end
 
 to add-forester
   initialize-foresters 1
@@ -61,6 +73,7 @@ to setup-agent
   set size 3
   set target a-city-patch
   set task "go home"
+  set money 10
   set task-list []
   let current a-city-patch
   setxy ([pxcor] of current) ([pycor] of current)
@@ -160,6 +173,15 @@ to harvest-crops
   after-change-patch
 end
 
+to deliver-inventory
+  (cf:ifelse 
+    inventory = "logs" [set money money + logs-selling-value] ;;LOGS give 2 money points
+    inventory  = "crops" [set money money + crops-selling-value] ;; Crops give 1 money point
+    inventory = "" []
+  )
+  set inventory ""
+end
+
 to move-towards-target
   if(target != nobody)[
     face target
@@ -178,8 +200,8 @@ to perform-task
     task = "replant forest" [replant-forest]
     task = "get seeds" [get-seeds]
     task = "ignite forest" [ignite]
-    task = "deliver crops" [ set inventory ""];; also implement 'selling' of crops
-    task = "deliver logs" [ set inventory ""];; also implement 'selling' of logs
+    task = "deliver crops" [deliver-inventory];; also implement 'selling' of crops
+    task = "deliver logs" [deliver-inventory];; also implement 'selling' of logs
     task = "go home" [if is-farmer? self [ask-to-ignite]]
     []
   )
