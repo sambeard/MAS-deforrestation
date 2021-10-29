@@ -215,9 +215,9 @@ to deliver-inventory
     inventory = "logs" [
       set community-money community-money + (logs-selling-value * (1 - taxes-logs))
       set government-money government-money + (logs-selling-value * (taxes-logs))
-    ] ;;LOGS give 2 money points
+    ]
     inventory  = "crops" [set community-money community-money + (crops-selling-value * (1 - taxes-crops))
-      set government-money government-money + (crops-selling-value * (taxes-crops))] ;; Crops give 1 money point
+      set government-money government-money + (crops-selling-value * (taxes-crops))]
     inventory = "" []
   )
   set inventory ""
