@@ -675,11 +675,12 @@ NIL
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
 "Government" 1.0 0 -612749 true "" "plot government-money"
 "Community" 1.0 0 -7500403 true "" "plot community-money"
+"Base-line" 1.0 0 -2674135 true "" "plot 0"
 
 SLIDER
 324
