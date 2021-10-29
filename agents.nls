@@ -10,6 +10,9 @@ globals [
   last-tick-zero
   dead-agents
   breeded-agents
+  last-comm-money
+  gr-comm-money
+  last-gr-comm-money
 ]
 
 turtles-own [ target targetType task task-list inventory]; forester parameters
@@ -45,29 +48,35 @@ end
 
 to update-community-money
   set community-money community-money - (count turtles) * living-cost 
+  set gr-comm-money (1 - plot-alpha) * gr-comm-money + plot-alpha * (community-money - last-comm-money)
+  
   (cf:ifelse 
-    (community-money) <= 0 and (ticks - last-tick-zero >= ticks-below-zero) [
+    (community-money) <= 0 and (gr-comm-money < 0) and (ticks - last-tick-zero >= ticks-th) [
       ask one-of turtles [die] 
       set dead-agents dead-agents + 1
       set last-tick-zero ticks
     ]
-    (community-money) <= 0 and (ticks - last-tick-zero < ticks-below-zero)[]
-    (community-money >= 0) or (community-money > 0) [set last-tick-zero ticks]
+    (community-money) <= 0 and (gr-comm-money < 0) and (ticks - last-tick-zero < ticks-th)[]
+    (community-money >= 0) or (gr-comm-money > 0) [set last-tick-zero ticks] ;; reset if any of metrics is above threshold
   )
   (cf:ifelse 
-    (community-money) >= breeding-money and (ticks - last-tick-breed >= ticks-below-zero) [
+    ( (community-money) >= breeding-money-th)  and (gr-comm-money > gr-thresh) and  (ticks - last-tick-breed >= ticks-th) [
       let probability random-float 1
     
       (cf:ifelse 
-        probability >= 0.5 [add-forester]
-        probability < 0.5 [add-farmer]
+        (probability >= 0.5) and (count turtles < max-agents)  [add-forester]
+        (probability < 0.5) and (count turtles < max-agents) [add-farmer]
       )
       set breeded-agents breeded-agents + 1
+      set community-money community-money - breeding-cost
       set last-tick-breed ticks
     ]
-    (community-money) >= breeding-money and (ticks - last-tick-breed < ticks-below-zero)[]
-    (community-money >= breeding-money) or (community-money < breeding-money) [set last-tick-breed ticks]
+    (community-money) >= breeding-money-th and (gr-comm-money > gr-thresh) and (ticks - last-tick-breed < ticks-th)[]
+    (community-money >= breeding-money-th) or (community-money < breeding-money-th) or (gr-comm-money < gr-thresh) [set last-tick-breed ticks]
    )
+  
+  set last-comm-money community-money
+  set last-gr-comm-money gr-comm-money
 end
 ;; AGENT RELATED
 ;; ===================
@@ -204,11 +213,11 @@ end
 to deliver-inventory
   (cf:ifelse 
     inventory = "logs" [
-      set community-money community-money + (logs-selling-value * (1 - taxes-value))
-      set government-money government-money + (logs-selling-value * (taxes-value))
+      set community-money community-money + (logs-selling-value * (1 - taxes-logs))
+      set government-money government-money + (logs-selling-value * (taxes-logs))
     ] ;;LOGS give 2 money points
-    inventory  = "crops" [set community-money community-money + (crops-selling-value * (1 - taxes-value))
-      set government-money government-money + (crops-selling-value * (taxes-value))] ;; Crops give 1 money point
+    inventory  = "crops" [set community-money community-money + (crops-selling-value * (1 - taxes-crops))
+      set government-money government-money + (crops-selling-value * (taxes-crops))] ;; Crops give 1 money point
     inventory = "" []
   )
   set inventory ""
