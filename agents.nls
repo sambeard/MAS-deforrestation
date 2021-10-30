@@ -24,7 +24,7 @@ to setup-agents
   initialize-farmers initial-amount-of-farmers
   setup-free-patches
   set government-money 1000
-  set community-money 1000
+  set community-money 10000
   set last-tick-breed ticks
   set last-tick-zero ticks
   set dead-agents 0
