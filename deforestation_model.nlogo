@@ -656,10 +656,10 @@ reforest-chance
 HORIZONTAL
 
 PLOT
-510
-638
-829
-844
+776
+634
+1095
+840
 Economy value
 NIL
 NIL
@@ -676,10 +676,10 @@ PENS
 "Base-line" 1.0 0 -2674135 true "" "plot 0"
 
 SLIDER
-324
-636
-496
-669
+590
+632
+762
+665
 Crops-selling-value
 Crops-selling-value
 0
@@ -691,10 +691,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-325
-675
-497
-708
+591
+671
+763
+704
 Logs-selling-value
 Logs-selling-value
 0
@@ -706,10 +706,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-324
-714
-496
-747
+590
+710
+762
+743
 taxes-value
 taxes-value
 0
@@ -721,10 +721,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-324
-753
-496
-786
+590
+749
+762
+782
 living-cost
 living-cost
 0
@@ -736,10 +736,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-324
-791
-496
-824
+590
+787
+762
+820
 ticks-below-zero
 ticks-below-zero
 0
@@ -751,10 +751,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-528
-849
-611
-894
+776
+845
+859
+890
 NIL
 dead-agents
 17
@@ -762,10 +762,10 @@ dead-agents
 11
 
 SLIDER
-323
-826
-495
-859
+589
+822
+761
+855
 breeding-money
 breeding-money
 0
@@ -777,15 +777,90 @@ NIL
 HORIZONTAL
 
 MONITOR
-620
-850
-722
-895
+868
+846
+970
+891
 NIL
 breeded-agents
 17
 1
 11
+
+SLIDER
+369
+717
+541
+750
+seed-cost
+seed-cost
+1
+100
+2.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+368
+758
+540
+791
+ignite-cost
+ignite-cost
+1
+1000
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+367
+797
+539
+830
+reforest-cost
+reforest-cost
+0
+100
+53.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+9
+846
+181
+879
+relocate-chance
+relocate-chance
+0
+100
+12.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+10
+887
+215
+920
+create-new-town-chance
+create-new-town-chance
+0
+100
+1.0
+1
+1
+%
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
