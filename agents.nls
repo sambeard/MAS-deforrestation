@@ -74,7 +74,7 @@ to update-community-money
   if(community-money < breeding-money-th or gr-comm-money < gr-thresh) [set last-tick-breed ticks]
   
   ;; update prev money
-  set gr-comm-money ((1 - growth-smoothing) * gr-comm-money + growth-smoothing * ((community-money - last-comm-money) / abs(community-money)))
+  set gr-comm-money ((1.0 - growth-smoothing) * gr-comm-money + growth-smoothing * (((community-money - last-comm-money) / (count turtles)) - 1))
   set last-comm-money community-money
   set last-gr-comm-money gr-comm-money
   
