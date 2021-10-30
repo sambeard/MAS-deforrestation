@@ -92,6 +92,7 @@ to color-patch
   ptype = "wasteland" [ 36 ]
   ptype = "farmland" [ 67 ]
   ptype = "crops" [ 65 ]
+  ptype = "river" [ 96 ]
   ptype = "fire" [ red ]
     [ grey ])
 end
