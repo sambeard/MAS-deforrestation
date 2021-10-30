@@ -100,7 +100,8 @@ end
 to setup-agent
   set shape "person"
   set size 3
-  set target a-city-patch
+  set target a-city-expansion-patch
+  ask target [set ptype "city" color-patch]
   set task "go home"
   set task-list []
   let current a-city-patch
@@ -320,6 +321,20 @@ to-report get-ptype
   report [ptype] of patch-here
 end
 
+to-report a-city-expansion-patch
+  let cps patches with [ptype != "city" and ptype != "river" and any? neighbors with [ptype = "city"]]
+  let wps patches with [ptype != "city" and ptype != "river" and any? neighbors with [ptype = "river"]]
+  let ps ifelse-value (random 100 < create-new-town-chance)
+    [wps]
+    [cps]
+  report one-of ps
+end
+
+to-report a-city-removal-patch
+  let ps patches with [ptype = "city" and any? neighbors with [ptype = "city"] and not all? neighbors [ptype = "city"]]
+  report one-of ps
+end
+  
 to-report unattended-patches
   ; patch-set automatically filters out all non patch entries (eg nobodies)
   report patch-set filter is-patch? patch-list 
