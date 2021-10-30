@@ -102,7 +102,7 @@ to initialize-farmers [amount]
   create-farmers amount [
     setup-agent
     set color 45 ;; yellow
-    set seeds max-seeds
+    set seeds 0
   ]
 end
 
