@@ -156,13 +156,16 @@ to planting-crops
 end
 
 to get-seeds
-  set seeds max-seeds
-  set color 45; yellow
-  set task ""
+  if(community-money > seed-cost)[
+    set seeds (min (list (int community-money / (seed-cost)) max-seeds))
+    set community-money (community-money - seeds * seed-cost)
+    set color 45; yellow
+    set task ""
+  ]
 end
 
 to ask-to-ignite
-  if (random 100 < ask-to-light-chance)
+  if (random 100 < ask-to-light-chance and government-money > ignite-cost)
   [
     ; choose best spot
     let best-patch min-one-of (patches with [ptype = "young forest" and (item patch-index patch-list) != nobody and (distance myself <= max-travel-distance)] ) [distance myself]
@@ -182,8 +185,9 @@ to ask-to-ignite
           ; set new task
           set task "ignite forest"
           set target best-patch
+          ; withdraw money
+          set government-money (government-money - ignite-cost)
           claim-target target
-          show word "will set fire to: " best-patch
         ]
       ]
     ]
@@ -191,8 +195,11 @@ to ask-to-ignite
 end
 
 to replant-forest
-  set ptype "young forest"
-  after-change-patch
+  if(government-money > reforest-cost)[
+    set ptype "young forest"
+    set government-money (government-money - (reforest-cost))
+    after-change-patch
+  ]
 end
 
 to harvest-crops
@@ -255,8 +262,8 @@ to get-new-task
       set task-list lput (ifelse-value 
         has-inventory? [(list "deliver crops" nobody)]
         field != nobody [(list "harvest crops" field)]
-        seeds = 0 [(list "get seeds" nobody)]  
-        wasteland != nobody [(list "plant seeds" field)]  
+        seeds = 0 and community-money > seed-cost * max-seeds  [(list "get seeds" nobody)]  
+        wasteland != nobody and seeds > 0 [(list "plant seeds" field)]  
         [(list "go home" nobody)]   
       ) task-list
     ]
