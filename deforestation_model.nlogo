@@ -571,7 +571,7 @@ max-travel-distance
 max-travel-distance
 1
 world-width * sqrt 2
-5.0
+20.0
 1
 1
 patches
@@ -915,9 +915,9 @@ SLIDER
 gr-thresh
 gr-thresh
 0
-.10
-0.01
-.001
+5
+0.8
+.1
 1
 NIL
 HORIZONTAL
@@ -929,6 +929,21 @@ SLIDER
 933
 growth-smoothing
 growth-smoothing
+0
+1
+0.1
+.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+375
+856
+583
+889
+minimum-growth-for-survival
+minimum-growth-for-survival
 0
 1
 0.1

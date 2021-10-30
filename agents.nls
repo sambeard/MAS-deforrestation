@@ -50,11 +50,13 @@ to update-community-money
   set community-money community-money - (count turtles) * living-cost 
   
   ;; can not support all life
-  if (community-money) <= 0 and (gr-comm-money < 0) and (ticks - ticks-when-last-death >= ticks-th) [
+  if (community-money) <= 0 and (gr-comm-money < minimum-growth-for-survival) and (ticks - ticks-when-last-death >= ticks-th) [
     remove-turtle one-of turtles
     set dead-agents dead-agents + 1
     set ticks-when-last-death ticks
   ]
+  
+  ;; reproduce 
   if ((community-money) >= breeding-money-th)  and (gr-comm-money > gr-thresh) and (ticks - last-tick-breed >= ticks-th) [
     if(count turtles < max-agents)[
       let probability random-float 1
@@ -110,7 +112,7 @@ end
 
 to setup-agent
   set shape "person"
-  set size 3
+  set size 2
   set target a-city-expansion-patch
   ask target [set ptype "city" color-patch]
   set task "go home"
