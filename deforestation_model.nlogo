@@ -23,6 +23,8 @@ to regenerate-world
 end
 
 to go
+  if(count turtles = 0)
+  [stop]
   update-natural-world
   update-agents
 
