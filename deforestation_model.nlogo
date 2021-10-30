@@ -560,6 +560,7 @@ PENS
 "young forest" 1.0 0 -13210332 true "" "plot count patches with [ptype = \"young forest\"]"
 "farmland" 1.0 0 -8330359 true "" "plot count patches with [ptype = \"farmland\"]"
 "wasteland" 1.0 0 -5207188 true "" "plot count patches with [ptype = \"wasteland\"]"
+"city" 1.0 0 -7500403 true "" "plot count patches with [ptype = \"city\"]"
 
 SLIDER
 10
