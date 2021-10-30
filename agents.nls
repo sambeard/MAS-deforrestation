@@ -247,6 +247,7 @@ to perform-task
     task = "ignite forest" [ignite]
     task = "deliver crops" [deliver-inventory];; also implement 'selling' of crops
     task = "deliver logs" [deliver-inventory];; also implement 'selling' of logs
+    task = "relocate" []
     task = "go home" [if is-farmer? self [ask-to-ignite]]
     []
   )
@@ -265,6 +266,7 @@ to get-new-task
         field != nobody [(list "harvest crops" field)]
         seeds = 0 and community-money > seed-cost * max-seeds  [(list "get seeds" nobody)]  
         wasteland != nobody and seeds > 0 [(list "plant seeds" field)]  
+        random 100 < relocate-chance [(list "relocate" a-city-patch)]
         [(list "go home" nobody)]   
       ) task-list
     ]
@@ -275,7 +277,8 @@ to get-new-task
         inventory = "logs" [(list "deliver logs" nobody)]
         old-forest != nobody [(list "chop forest" old-forest)]
         wasteland != nobody and (random 100 < reforest-chance) [(list "replant forest" wasteland)]
-        [(list "go home" nobody)]   
+        random 100 < relocate-chance [(list "relocate" a-city-patch)]
+        [(list "go home" nobody)]
       ) task-list
     ]
   ]
@@ -295,9 +298,7 @@ end
 to set-new-target
   if(target != nobody) [release-target target]
   let tt get-patch-type-for-task task
-  set target ifelse-value (task = "go home")
-  [ a-city-patch ]
-  [ closest-patch unattended-patches with [ptype = tt and ifelse-value (tt = "city")[true][distance myself <= max-travel-distance ]]]
+  set target closest-patch unattended-patches with [ptype = tt and ifelse-value (tt = "city")[true][distance myself <= max-travel-distance]]
   ifelse (target = nobody) 
     ; clear task if no patches left to harvest
     [if(task = "harvest crops") [set task ""]]
