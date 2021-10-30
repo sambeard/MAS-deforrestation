@@ -4,9 +4,18 @@ breed [ farmers farmer]
 
 globals [
   patch-list
+  government-money
+  community-money
+  last-tick-breed
+  last-tick-zero
+  dead-agents
+  breeded-agents
+  last-comm-money
+  gr-comm-money
+  last-gr-comm-money
 ]
 
-turtles-own [ target targetType task task-list inventory ]; forester parameters
+turtles-own [ target targetType task task-list inventory]; forester parameters
 farmers-own [ seeds ]; farmers parameters
 
 
@@ -14,6 +23,11 @@ to setup-agents
   initialize-foresters initial-amount-of-foresters
   initialize-farmers initial-amount-of-farmers
   setup-free-patches
+  set government-money 1000
+  set community-money 1000
+  set last-tick-breed ticks
+  set last-tick-zero ticks
+  set dead-agents 0
 end
 
 to update-agents
@@ -28,9 +42,45 @@ to update-agents
       [move-towards-target]
       )
   ]
+    update-community-money
+end
+
+
+to update-community-money
+  set community-money community-money - (count turtles) * living-cost 
+  set gr-comm-money (1 - plot-alpha) * gr-comm-money + plot-alpha * (community-money - last-comm-money)
+  
+  (cf:ifelse 
+    (community-money) <= 0 and (gr-comm-money < 0) and (ticks - last-tick-zero >= ticks-th) [
+      ask one-of turtles [die] 
+      set dead-agents dead-agents + 1
+      set last-tick-zero ticks
+    ]
+    (community-money) <= 0 and (gr-comm-money < 0) and (ticks - last-tick-zero < ticks-th)[]
+    (community-money >= 0) or (gr-comm-money > 0) [set last-tick-zero ticks] ;; reset if any of metrics is above threshold
+  )
+  (cf:ifelse 
+    ( (community-money) >= breeding-money-th)  and (gr-comm-money > gr-thresh) and  (ticks - last-tick-breed >= ticks-th) [
+      let probability random-float 1
+    
+      (cf:ifelse 
+        (probability >= 0.5) and (count turtles < max-agents)  [add-forester]
+        (probability < 0.5) and (count turtles < max-agents) [add-farmer]
+      )
+      set breeded-agents breeded-agents + 1
+      set community-money community-money - breeding-cost
+      set last-tick-breed ticks
+    ]
+    (community-money) >= breeding-money-th and (gr-comm-money > gr-thresh) and (ticks - last-tick-breed < ticks-th)[]
+    (community-money >= breeding-money-th) or (community-money < breeding-money-th) or (gr-comm-money < gr-thresh) [set last-tick-breed ticks]
+   )
+  
+  set last-comm-money community-money
+  set last-gr-comm-money gr-comm-money
 end
 ;; AGENT RELATED
 ;; ===================
+
 
 to add-forester
   initialize-foresters 1
@@ -160,6 +210,19 @@ to harvest-crops
   after-change-patch
 end
 
+to deliver-inventory
+  (cf:ifelse 
+    inventory = "logs" [
+      set community-money community-money + (logs-selling-value * (1 - taxes-logs))
+      set government-money government-money + (logs-selling-value * (taxes-logs))
+    ]
+    inventory  = "crops" [set community-money community-money + (crops-selling-value * (1 - taxes-crops))
+      set government-money government-money + (crops-selling-value * (taxes-crops))]
+    inventory = "" []
+  )
+  set inventory ""
+end
+
 to move-towards-target
   if(target != nobody)[
     face target
@@ -178,8 +241,8 @@ to perform-task
     task = "replant forest" [replant-forest]
     task = "get seeds" [get-seeds]
     task = "ignite forest" [ignite]
-    task = "deliver crops" [ set inventory ""];; also implement 'selling' of crops
-    task = "deliver logs" [ set inventory ""];; also implement 'selling' of logs
+    task = "deliver crops" [deliver-inventory];; also implement 'selling' of crops
+    task = "deliver logs" [deliver-inventory];; also implement 'selling' of logs
     task = "go home" [if is-farmer? self [ask-to-ignite]]
     []
   )

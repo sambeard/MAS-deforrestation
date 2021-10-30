@@ -117,7 +117,7 @@ def main(img_name, width, height):
 
 if __name__ == "__main__":
     # set default
-    args = ("world_bmp", 200, 200)
+    args = ("world_bmp", 100, 100)
     if(len(sys.argv)==4):
         args = (sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
     main(*args)
