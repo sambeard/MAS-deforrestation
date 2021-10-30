@@ -288,16 +288,6 @@ crops_flammabillity
 NIL
 HORIZONTAL
 
-TEXTBOX
-905
-685
-1055
-881
-Future improvements:\n\nHave a global or local (different scale) climate system influence the growth rate/ spread rate\n\nmake maturity for fire a decreasing value that starts with a value depending on the originating tile\n\nTransportation is mainly via boats
-11
-0.0
-1
-
 BUTTON
 14
 87
