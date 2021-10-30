@@ -23,6 +23,8 @@ to regenerate-world
 end
 
 to go
+  if(count turtles = 0)
+  [stop]
   update-natural-world
   update-agents
 
@@ -286,16 +288,6 @@ crops_flammabillity
 NIL
 HORIZONTAL
 
-TEXTBOX
-905
-685
-1055
-881
-Future improvements:\n\nHave a global or local (different scale) climate system influence the growth rate/ spread rate\n\nmake maturity for fire a decreasing value that starts with a value depending on the originating tile\n\nTransportation is mainly via boats
-11
-0.0
-1
-
 BUTTON
 14
 87
@@ -386,7 +378,7 @@ initial-amount-of-foresters
 initial-amount-of-foresters
 0
 100
-57.0
+51.0
 1
 1
 NIL
@@ -412,7 +404,7 @@ movement-speed
 movement-speed
 0
 100
-13.0
+1.0
 1
 1
 NIL
@@ -437,7 +429,7 @@ initial-amount-of-farmers
 initial-amount-of-farmers
 0
 100
-74.0
+90.0
 1
 1
 NIL
@@ -568,6 +560,7 @@ PENS
 "young forest" 1.0 0 -13210332 true "" "plot count patches with [ptype = \"young forest\"]"
 "farmland" 1.0 0 -8330359 true "" "plot count patches with [ptype = \"farmland\"]"
 "wasteland" 1.0 0 -5207188 true "" "plot count patches with [ptype = \"wasteland\"]"
+"city" 1.0 0 -7500403 true "" "plot count patches with [ptype = \"city\"]"
 
 SLIDER
 10
@@ -578,7 +571,7 @@ max-travel-distance
 max-travel-distance
 1
 world-width * sqrt 2
-44.0
+5.0
 1
 1
 patches
@@ -631,7 +624,7 @@ ask-to-light-chance
 ask-to-light-chance
 0
 100
-60.0
+24.0
 1
 1
 %
@@ -656,17 +649,17 @@ reforest-chance
 reforest-chance
 0
 100
-17.0
+31.0
 1
 1
 %
 HORIZONTAL
 
 PLOT
-510
-638
-829
-844
+776
+634
+1095
+840
 Economy value
 NIL
 NIL
@@ -683,25 +676,25 @@ PENS
 "Base-line" 1.0 0 -2674135 true "" "plot 0"
 
 SLIDER
-371
-636
-496
-669
+590
+632
+762
+665
 Crops-selling-value
 Crops-selling-value
 0
 100
-35.0
+43.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-377
-669
-496
-702
+591
+671
+763
+704
 Logs-selling-value
 Logs-selling-value
 0
@@ -713,40 +706,40 @@ NIL
 HORIZONTAL
 
 SLIDER
-393
-714
-496
-747
+590
+710
+762
+743
 taxes-logs
 taxes-logs
 0
 0.25
-0.12
+0.25
 0.01
 1
 NIL
 HORIZONTAL
 
 SLIDER
-406
-791
-498
-824
+590
+749
+762
+782
 living-cost
 living-cost
 0
 10
-2.5
+0.9
 0.1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-385
-900
-557
-933
+590
+787
+762
+820
 ticks-th
 ticks-th
 0
@@ -758,10 +751,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-528
-849
-611
-894
+776
+845
+859
+890
 NIL
 dead-agents
 17
@@ -769,10 +762,10 @@ dead-agents
 11
 
 SLIDER
-559
-899
-731
-932
+589
+822
+761
+855
 breeding-money-th
 breeding-money-th
 0
@@ -784,10 +777,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-620
-850
-722
-895
+868
+846
+970
+891
 NIL
 breeded-agents
 17
@@ -795,10 +788,25 @@ breeded-agents
 11
 
 SLIDER
-397
-825
-499
-858
+369
+717
+541
+750
+seed-cost
+seed-cost
+1
+100
+9.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+587
+903
+689
+936
 breeding-cost
 breeding-cost
 0
@@ -810,15 +818,45 @@ NIL
 HORIZONTAL
 
 SLIDER
-393
-747
-497
-780
+368
+758
+540
+791
+ignite-cost
+ignite-cost
+1
+1000
+103.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+367
+797
+539
+830
+reforest-cost
+reforest-cost
+0
+100
+53.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+590
+862
+694
+895
 taxes-crops
 taxes-crops
 0
 0.25
-0.12
+0.25
 0.01
 1
 NIL
@@ -826,9 +864,24 @@ HORIZONTAL
 
 SLIDER
 9
-840
+846
 181
-873
+879
+relocate-chance
+relocate-chance
+0
+100
+6.0
+1
+1
+%
+HORIZONTAL
+
+SLIDER
+195
+848
+367
+881
 max-agents
 max-agents
 100
@@ -840,16 +893,46 @@ NIL
 HORIZONTAL
 
 SLIDER
-384
-935
-556
-968
+10
+887
+215
+920
+create-new-town-chance
+create-new-town-chance
+0
+100
+1.0
+1
+1
+%
+HORIZONTAL
+
+SLIDER
+583
+946
+755
+979
 gr-thresh
 gr-thresh
 0
-100
-82.0
+.10
+0.01
+.001
 1
+NIL
+HORIZONTAL
+
+SLIDER
+378
+900
+550
+933
+growth-smoothing
+growth-smoothing
+0
+1
+0.1
+.01
 1
 NIL
 HORIZONTAL

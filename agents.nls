@@ -7,7 +7,7 @@ globals [
   government-money
   community-money
   last-tick-breed
-  last-tick-zero
+  ticks-when-last-death
   dead-agents
   breeded-agents
   last-comm-money
@@ -26,7 +26,7 @@ to setup-agents
   set government-money 1000
   set community-money 10000
   set last-tick-breed ticks
-  set last-tick-zero ticks
+  set ticks-when-last-death ticks
   set dead-agents 0
 end
 
@@ -48,35 +48,37 @@ end
 
 to update-community-money
   set community-money community-money - (count turtles) * living-cost 
-  set gr-comm-money (1 - plot-alpha) * gr-comm-money + plot-alpha * (community-money - last-comm-money)
   
-  (cf:ifelse 
-    (community-money) <= 0 and (gr-comm-money < 0) and (ticks - last-tick-zero >= ticks-th) [
-      ask one-of turtles [die] 
-      set dead-agents dead-agents + 1
-      set last-tick-zero ticks
-    ]
-    (community-money) <= 0 and (gr-comm-money < 0) and (ticks - last-tick-zero < ticks-th)[]
-    (community-money >= 0) or (gr-comm-money > 0) [set last-tick-zero ticks] ;; reset if any of metrics is above threshold
-  )
-  (cf:ifelse 
-    ( (community-money) >= breeding-money-th)  and (gr-comm-money > gr-thresh) and  (ticks - last-tick-breed >= ticks-th) [
+  ;; can not support all life
+  if (community-money) <= 0 and (gr-comm-money < 0) and (ticks - ticks-when-last-death >= ticks-th) [
+    remove-turtle one-of turtles
+    set dead-agents dead-agents + 1
+    set ticks-when-last-death ticks
+  ]
+  if ((community-money) >= breeding-money-th)  and (gr-comm-money > gr-thresh) and (ticks - last-tick-breed >= ticks-th) [
+    if(count turtles < max-agents)[
       let probability random-float 1
-    
-      (cf:ifelse 
-        (probability >= 0.5) and (count turtles < max-agents)  [add-forester]
-        (probability < 0.5) and (count turtles < max-agents) [add-farmer]
-      )
+      
+      ifelse (probability >= 0.5)  
+      [ add-forester ]
+      [ add-farmer ]
+      
       set breeded-agents breeded-agents + 1
       set community-money community-money - breeding-cost
       set last-tick-breed ticks
     ]
-    (community-money) >= breeding-money-th and (gr-comm-money > gr-thresh) and (ticks - last-tick-breed < ticks-th)[]
-    (community-money >= breeding-money-th) or (community-money < breeding-money-th) or (gr-comm-money < gr-thresh) [set last-tick-breed ticks]
-   )
+  ]
   
+  ;; reset counters
+  if((gr-comm-money) > 0 or (community-money) > 0) [set ticks-when-last-death ticks]
+  if(community-money < breeding-money-th or gr-comm-money < gr-thresh) [set last-tick-breed ticks]
+  
+  ;; update prev money
+  set gr-comm-money ((1.0 - growth-smoothing) * gr-comm-money + growth-smoothing * ((community-money - last-comm-money) / (count turtles)))
   set last-comm-money community-money
   set last-gr-comm-money gr-comm-money
+  
+  show gr-comm-money
 end
 ;; AGENT RELATED
 ;; ===================
@@ -109,7 +111,8 @@ end
 to setup-agent
   set shape "person"
   set size 3
-  set target a-city-patch
+  set target a-city-expansion-patch
+  ask target [set ptype "city" color-patch]
   set task "go home"
   set task-list []
   let current a-city-patch
@@ -117,12 +120,17 @@ to setup-agent
   face target 
 end
 
+to remove-turtle [t]
+  ask a-city-removal-patch [set ptype "wasteland" color-patch]
+  ask t [release-target target die]
+end
+
 to remove-forester
-  ask one-of foresters [die]
+  remove-turtle one-of foresters
 end
 
 to remove-farmer
-  ask one-of farmers [die]
+  remove-turtle one-of farmers
 end
 
 to-report has-inventory?
@@ -141,9 +149,11 @@ to-report get-patch-type-for-task [t]
     t = "get seeds" ["city"]
     t = "deliver crops" ["city"]
     t = "deliver logs" ["city"]
+    t = "relocate" ["city"]
     t = "go home" ["city"]
     [ nobody] ; break on this
   )
+  
 end 
 
 to chop-forest
@@ -160,13 +170,16 @@ to planting-crops
 end
 
 to get-seeds
-  set seeds max-seeds
-  set color 45; yellow
-  set task ""
+  if(community-money > seed-cost)[
+    set seeds (min (list (int community-money / (seed-cost)) max-seeds))
+    set community-money (community-money - seeds * seed-cost)
+    set color 45; yellow
+    set task ""
+  ]
 end
 
 to ask-to-ignite
-  if (random 100 < ask-to-light-chance)
+  if (random 100 < ask-to-light-chance and government-money > ignite-cost)
   [
     ; choose best spot
     let best-patch min-one-of (patches with [ptype = "young forest" and (item patch-index patch-list) != nobody and (distance myself <= max-travel-distance)] ) [distance myself]
@@ -186,8 +199,9 @@ to ask-to-ignite
           ; set new task
           set task "ignite forest"
           set target best-patch
+          ; withdraw money
+          set government-money (government-money - ignite-cost)
           claim-target target
-          show word "will set fire to: " best-patch
         ]
       ]
     ]
@@ -195,8 +209,11 @@ to ask-to-ignite
 end
 
 to replant-forest
-  set ptype "young forest"
-  after-change-patch
+  if(government-money > reforest-cost)[
+    set ptype "young forest"
+    set government-money (government-money - (reforest-cost))
+    after-change-patch
+  ]
 end
 
 to harvest-crops
@@ -243,6 +260,7 @@ to perform-task
     task = "ignite forest" [ignite]
     task = "deliver crops" [deliver-inventory];; also implement 'selling' of crops
     task = "deliver logs" [deliver-inventory];; also implement 'selling' of logs
+    task = "relocate" []
     task = "go home" [if is-farmer? self [ask-to-ignite]]
     []
   )
@@ -259,8 +277,9 @@ to get-new-task
       set task-list lput (ifelse-value 
         has-inventory? [(list "deliver crops" nobody)]
         field != nobody [(list "harvest crops" field)]
-        seeds = 0 [(list "get seeds" nobody)]  
-        wasteland != nobody [(list "plant seeds" field)]  
+        seeds = 0 and community-money > seed-cost * max-seeds  [(list "get seeds" nobody)]  
+        wasteland != nobody and seeds > 0 [(list "plant seeds" field)]  
+        random 100 < relocate-chance [(list "relocate" nobody)]
         [(list "go home" nobody)]   
       ) task-list
     ]
@@ -271,7 +290,8 @@ to get-new-task
         inventory = "logs" [(list "deliver logs" nobody)]
         old-forest != nobody [(list "chop forest" old-forest)]
         wasteland != nobody and (random 100 < reforest-chance) [(list "replant forest" wasteland)]
-        [(list "go home" nobody)]   
+        random 100 < relocate-chance [(list "relocate" nobody)]
+        [(list "go home" nobody)]
       ) task-list
     ]
   ]
@@ -290,10 +310,12 @@ end
 
 to set-new-target
   if(target != nobody) [release-target target]
-  let tt get-patch-type-for-task task
-  set target ifelse-value (task = "go home")
-  [ a-city-patch ]
-  [ closest-patch unattended-patches with [ptype = tt and ifelse-value (tt = "city")[true][distance myself <= max-travel-distance ]]]
+  ifelse(task = "relocate")
+  [ set target a-city-patch ]
+  [
+    let tt get-patch-type-for-task task
+    set target closest-patch unattended-patches with [ptype = tt and ifelse-value (tt = "city")[true][distance myself <= max-travel-distance]]
+  ]
   ifelse (target = nobody) 
     ; clear task if no patches left to harvest
     [if(task = "harvest crops") [set task ""]]
@@ -317,6 +339,20 @@ to-report get-ptype
   report [ptype] of patch-here
 end
 
+to-report a-city-expansion-patch
+  let cps patches with [ptype != "city" and ptype != "river" and any? neighbors with [ptype = "city"]]
+  let wps patches with [ptype != "city" and ptype != "river" and any? neighbors with [ptype = "river"]]
+  let ps ifelse-value (random 100 < create-new-town-chance)
+    [wps]
+    [cps]
+  report one-of ps
+end
+
+to-report a-city-removal-patch
+  let ps patches with [ptype = "city" and any? neighbors with [ptype = "city"] and not all? neighbors [ptype = "city"]]
+  report one-of ps
+end
+  
 to-report unattended-patches
   ; patch-set automatically filters out all non patch entries (eg nobodies)
   report patch-set filter is-patch? patch-list 
