@@ -47,7 +47,7 @@ to update-community-money
   set community-money community-money - (count turtles) * living-cost 
   (cf:ifelse 
     (community-money) <= 0 and (ticks - last-tick-zero >= ticks-below-zero) [
-      ask one-of turtles [die] 
+      remove-turtle one-of turtles
       set dead-agents dead-agents + 1
       set last-tick-zero ticks
     ]
@@ -108,12 +108,17 @@ to setup-agent
   face target 
 end
 
+to remove-turtle [t]
+  ask a-city-removal-patch [set ptype "wasteland" color-patch]
+  ask t [release-target target die]
+end
+
 to remove-forester
-  ask one-of foresters [die]
+  remove-turtle one-of foresters
 end
 
 to remove-farmer
-  ask one-of farmers [die]
+  remove-turtle one-of farmers
 end
 
 to-report has-inventory?
