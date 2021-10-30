@@ -378,7 +378,7 @@ initial-amount-of-foresters
 initial-amount-of-foresters
 0
 100
-57.0
+51.0
 1
 1
 NIL
@@ -404,7 +404,7 @@ movement-speed
 movement-speed
 0
 100
-13.0
+1.0
 1
 1
 NIL
@@ -429,7 +429,7 @@ initial-amount-of-farmers
 initial-amount-of-farmers
 0
 100
-74.0
+90.0
 1
 1
 NIL
@@ -571,7 +571,7 @@ max-travel-distance
 max-travel-distance
 1
 world-width * sqrt 2
-44.0
+5.0
 1
 1
 patches
@@ -624,7 +624,7 @@ ask-to-light-chance
 ask-to-light-chance
 0
 100
-60.0
+24.0
 1
 1
 %
@@ -649,7 +649,7 @@ reforest-chance
 reforest-chance
 0
 100
-17.0
+31.0
 1
 1
 %
@@ -684,7 +684,7 @@ Crops-selling-value
 Crops-selling-value
 0
 100
-35.0
+43.0
 1
 1
 NIL
@@ -714,7 +714,7 @@ taxes-logs
 taxes-logs
 0
 0.25
-0.12
+0.25
 0.01
 1
 NIL
@@ -729,7 +729,7 @@ living-cost
 living-cost
 0
 10
-2.5
+0.9
 0.1
 1
 NIL
@@ -796,17 +796,17 @@ seed-cost
 seed-cost
 1
 100
-2.0
+9.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-397
-825
-499
-858
+587
+903
+689
+936
 breeding-cost
 breeding-cost
 0
@@ -826,7 +826,7 @@ ignite-cost
 ignite-cost
 1
 1000
-50.0
+103.0
 1
 1
 NIL
@@ -848,15 +848,15 @@ NIL
 HORIZONTAL
 
 SLIDER
-393
-747
-497
-780
+590
+862
+694
+895
 taxes-crops
 taxes-crops
 0
 0.25
-0.12
+0.25
 0.01
 1
 NIL
@@ -871,17 +871,17 @@ relocate-chance
 relocate-chance
 0
 100
-12.0
+6.0
 1
 1
-NIL
+%
 HORIZONTAL
 
 SLIDER
-9
-840
-181
-873
+195
+848
+367
+881
 max-agents
 max-agents
 100
@@ -908,16 +908,31 @@ create-new-town-chance
 HORIZONTAL
 
 SLIDER
-384
-935
-556
-968
+583
+946
+755
+979
 gr-thresh
 gr-thresh
 0
-100
-82.0
+.10
+0.01
+.001
 1
+NIL
+HORIZONTAL
+
+SLIDER
+378
+900
+550
+933
+growth-smoothing
+growth-smoothing
+0
+1
+0.1
+.01
 1
 NIL
 HORIZONTAL
