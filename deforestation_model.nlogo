@@ -542,7 +542,7 @@ max-travel-distance
 max-travel-distance
 0
 world-width * (sqrt 2)
-5.0
+15.0
 1
 1
 NIL
