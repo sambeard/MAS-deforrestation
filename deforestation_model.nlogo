@@ -551,39 +551,41 @@ HORIZONTAL
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This is a simulation of the amazones and the possible effects of deforestation and agriculture on the ecology and economy
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+There are two types of agents, Farmers and Foresters. 
+Foresters focus on the deforestation, replantation and ignition of the forest. 
+The farmers focus on planting, harvesting and asking foresters to ignite the forest.
+They move around and try to make money using these actions. This money is then aggregated in to the global wealth of the system. Part of the income of the agents is also collected in the form of taxes which can then be used in favor of either the ecology (reforestation) or the economy (agriculture).
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+You can supply a world map or use one of the supplied world maps in the folder. From there you can generate the world and initialize it with a certain amount of agents. Choose a distribution between the amount of farmers and the amount of foresters and setup the environment. 
+Now let it run and see how the environment changes overtime.
+You can use the sliders to change the simulation parameters or even alter the parameters in config.nls (however these have been set for stable conditions)
 
 ## THINGS TO NOTICE
 
-(suggested things for the user to notice while running the model)
+Look at the monitors and watch how certain preferences of the agents influence the ecology and economy. Do the values converge overtime? What balance is needed for the ecology to survive? and for the agents to survive? Does economic growth always mean economic viability in the long run? 
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+Change the parameters for relocation and favoruing to make a new city or expanding current cities to see how 'nomadic' life will effect the ecology
 
 ## EXTENDING THE MODEL
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+What if the task choosing is based on a dynamic heurstic modelling the expected outcome? what if agents have individual wealth (and non succesful agents die). What if agents have individual parameters? what if these parameters can be passed on to next generations?
 
 ## NETLOGO FEATURES
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+We use the shell extension to trigger a python script to generate netlogo worlds from bitmap images
 
-## RELATED MODELS
-
-(models in the NetLogo Models Library and elsewhere which are of related interest)
 
 ## CREDITS AND REFERENCES
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+This model was made by Mohamed Reda Benkhalifa, Manuel Maria Rocha and Sam Beard of the University of Twente for the Master course Multi Agent Systems
 @#$#@#$#@
 default
 true
