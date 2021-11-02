@@ -1,47 +1,94 @@
 globals [
+  ; occupancy
   forestry
   planting-seeds
   harvesting
   igniting
   planting-trees
   idling  
+  ; ecology
+  old-forest-patches
+  young-forest-patches
+  farmland-patches
+  wasteland-patches
+  city-patches
+  
 ]
 
-to setup-plot
+to stp-plots
   set forestry get-forestry
   set planting-seeds get-planting-seeds
   set harvesting get-harvesting
   set igniting get-igniting
   set planting-trees get-planting-trees
   set idling get-idling
+  
+  set old-forest-patches get-old-forest-patches
+  set young-forest-patches get-young-forest-patches
+  set farmland-patches get-farmland-patches
+  set wasteland-patches get-wasteland-patches
+  set city-patches get-city-patches
+  
+  
 end
 
-to update-plot
+to upd-plots
   set forestry alpha-mix forestry get-forestry
   set planting-seeds alpha-mix planting-seeds get-planting-seeds
   set harvesting alpha-mix harvesting get-harvesting
   set idling alpha-mix idling get-idling
-end
   
-to-report alpha-mix [a b]
-  report (1.0 - plot-alpha) * a + plot-alpha * b
+  set old-forest-patches alpha-mix old-forest-patches get-old-forest-patches
+  set young-forest-patches alpha-mix young-forest-patches get-young-forest-patches
+  set farmland-patches alpha-mix farmland-patches get-farmland-patches
+  set wasteland-patches alpha-mix wasteland-patches get-wasteland-patches
+  set city-patches alpha-mix city-patches get-city-patches
 end
+ 
+; occupancy
 to-report get-forestry
-  report count turtles with [task = "chop forest" or task = "deliver logs"]
+  report get-percentage-of (turtles with [task = "chop forest" or task = "deliver logs"]) turtles
 end
 to-report get-planting-seeds
-  report count turtles with [task = "plant seeds" or task = "get seeds"]
+  report get-percentage-of (farmers with [task = "plant crops" or task = "get seeds"]) turtles
 end
 to-report get-harvesting
-  report count turtles with [task = "harvest crops" or task = "deliver crops"]
+  report get-percentage-of (turtles with [task = "harvest crops" or task = "deliver crops"]) turtles
 end
 to-report get-idling
-  report count turtles with [task = "" or task = "go home"]
+  report get-percentage-of (turtles with [task = "" or task = "go home" or task = "relocating"]) turtles
 end
 to-report get-igniting
-  report count turtles with [task = "ignite forest"]
+  report get-percentage-of (turtles with [task = "ignite forest"]) turtles
 end
 to-report get-planting-trees
-  report count turtles with [task = "replant forest"]
+  report get-percentage-of (foresters with [task = "plant forest" or task = "get seeds"]) turtles
+end
+
+; ecology
+to-report get-old-forest-patches
+  report get-percentage-of (patches with [ptype = "old forest"]) patches
+end
+to-report get-young-forest-patches
+  report get-percentage-of (patches with [ptype = "young forest"]) patches
+end
+to-report get-farmland-patches
+  report get-percentage-of (patches with [ptype = "farmland" or ptype = "crops"]) patches
+end
+to-report get-wasteland-patches
+  report get-percentage-of (patches with [ptype = "wasteland"]) patches
+end
+to-report get-city-patches
+  report get-percentage-of (patches with [ptype = "city"]) patches
+end
+
+; util
+to-report get-percentage-of [as1 as2]
+  report ifelse-value (any? as2)
+  [(count as1 * 100 ) / count as2]
+  [0]
+end
+to-report alpha-mix [a b]
+  report (1.0 - plot-alpha) * a + plot-alpha * b
 end
 
