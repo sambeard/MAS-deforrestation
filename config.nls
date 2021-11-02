@@ -1,0 +1,51 @@
+globals [
+  ; agent related
+  movement-speed
+  max-agents
+  living-cost
+  ; breeding related
+  breeding-ticks-th
+  breeding-money-th
+  growth-smoothing
+  breeding-cost
+  gr-thresh
+  minimum-growth-for-survival
+  ; world related
+  natural_fire_chance
+  fire_duration
+  fire_spread
+  farmland_flammabillity
+  crops_flammabillity
+  young_forest_flammabillity
+  old_forest_flammabillity
+  crop_growth_duration
+  crop_rot_duration
+  forest_mature_duration
+  forest_regrowth_duration
+  ; plotting
+  plot-alpha
+]
+
+to load-config
+  set movement-speed 1
+  set max-agents 500
+  set growth-smoothing .1
+  set breeding-ticks-th 5
+  set living-cost 1.0
+  set breeding-cost 75
+  set breeding-money-th 2000
+  set gr-thresh 0.5
+  set natural_fire_chance 0.001
+  set fire_duration 5
+  set fire_spread 12.4
+  set farmland_flammabillity 0.35
+  set crops_flammabillity 0.6
+  set young_forest_flammabillity 0.35
+  set old_forest_flammabillity 0.15
+  set crop_growth_duration 220
+  set crop_rot_duration 110
+  set forest_mature_duration 500
+  set forest_regrowth_duration 200
+  set plot-alpha 0.1
+  
+end
